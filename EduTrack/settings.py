@@ -1,5 +1,6 @@
 import os
 import dj_database_url
+from pathlib import Path
 """
 Django settings for EduTrack project (50-60% Core Edition).
 """
@@ -70,7 +71,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'EduTrack.wsgi.application'
 
 DATABASES = {
-    'default': dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+    "default": dj_database_url.config(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,)
 }
 
