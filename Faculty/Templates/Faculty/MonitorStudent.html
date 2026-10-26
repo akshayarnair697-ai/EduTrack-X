@@ -1,0 +1,59 @@
+{% extends 'Faculty/FacultyBase.html' %}
+
+{% block title %}Monitor Student | Faculty Console{% endblock %}
+{% block active_students %}active{% endblock %}
+{% block header_title %}Student Profile: {{ student.student_name }}{% endblock %}
+{% block header_subtitle %}Programme: {{ student.programme.programme_name }} | Reg No: {{ student.student_regno|default:"N/A" }}{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 25px; margin-bottom: 25px; background: #ffffff;">
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: center;">
+        <div>
+            {% if student.student_photo %}
+            <img src="{{ student.student_photo.url }}" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #0284c7;">
+            {% else %}
+            <div style="width: 120px; height: 120px; border-radius: 50%; background: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 36px; color: #ffffff; font-weight: bold;">
+                {{ student.student_name|slice:":1" }}
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            <h3 style="color: #0f172a; margin-bottom: 10px; font-weight: 700;">{{ student.student_name }}</h3>
+            <p style="color: #334155; margin: 5px 0;"><strong>Email:</strong> {{ student.student_email }}</p>
+            <p style="color: #334155; margin: 5px 0;"><strong>Contact:</strong> {{ student.student_contact }}</p>
+            <p style="color: #334155; margin: 5px 0;"><strong>Gender:</strong> {{ student.student_gender }} | <strong>DOB:</strong> {{ student.student_dob }}</p>
+            <p style="color: #334155; margin: 5px 0;"><strong>Address:</strong> {{ student.student_address }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card" style="padding: 25px; background: #ffffff;">
+    <h3 style="color: #0f172a; font-size: 18px; margin-bottom: 15px;">Earned Academic Credits (Total: {{ total_credits }})</h3>
+    {% if student_credits %}
+    <div style="overflow-x: auto;">
+        <table class="table" style="width: 100%; border-collapse: collapse; color: #0f172a;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Credit Type</th>
+                    <th style="padding: 12px; color: #475569;">Credit Value</th>
+                    <th style="padding: 12px; color: #475569;">Remark</th>
+                    <th style="padding: 12px; color: #475569;">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for credit in student_credits %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 12px; color: #0f172a; font-weight: 600;">{{ credit.credit_type }}</td>
+                    <td style="padding: 12px; color: #7c3aed; font-weight: bold;">+{{ credit.credit_value }} Credits</td>
+                    <td style="padding: 12px; color: #64748b;">{{ credit.credit_remark|default:"N/A" }}</td>
+                    <td style="padding: 12px; color: #64748b;">{{ credit.credit_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: #64748b;">No credits logged for this student yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

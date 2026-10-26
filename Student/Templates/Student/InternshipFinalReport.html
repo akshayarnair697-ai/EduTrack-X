@@ -1,0 +1,46 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}Submit Final Internship Report | EduTrack-X{% endblock %}
+{% block active_apps %}active{% endblock %}
+{% block header_title %}Submit Final Internship Report{% endblock %}
+{% block header_subtitle %}{{ internship.opportunity.opportunity_title }} at {{ internship.company.company_name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <h3 class="mb-4">Final Report & Completion Certificate Submission</h3>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Final Internship Project Report (PDF / DOC) *</label>
+                    <input type="file" name="file_report" class="form-control" accept=".pdf,.doc,.docx" required>
+                    {% if final_report.report_file %}
+                    <small class="text-success"><i class="fa-solid fa-check"></i> Previously uploaded: <a href="{{ final_report.report_file.url }}" target="_blank">View Existing Report</a></small>
+                    {% endif %}
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Company Completion Certificate (Optional / Recommended)</label>
+                    <input type="file" name="file_certificate" class="form-control" accept=".pdf,.png,.jpg,.jpeg">
+                    {% if final_report.completion_certificate %}
+                    <small class="text-success"><i class="fa-solid fa-check"></i> Previously uploaded: <a href="{{ final_report.completion_certificate.url }}" target="_blank">View Certificate</a></small>
+                    {% endif %}
+                </div>
+
+                <div class="p-3 mb-4 rounded" style="background: #f8fafc; border: 1px solid #e2e8f0; font-size: 13px;">
+                    <i class="fa-solid fa-circle-info text-primary me-1"></i>
+                    Once submitted, your company evaluation and final report will be reviewed by your assigned faculty guide. Upon final evaluation approval, internship credits will be automatically credited to your tracker.
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Submit Final Report for Review
+                    </button>
+                    <a href="{% url 'Student:MyApplications' %}" class="btn btn-secondary w-50">Back to Applications</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

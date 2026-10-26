@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Student Portal | EduTrack{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="{% static 'Main/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'Main/assets/css/fontawesome.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'Main/assets/css/templatemo-edu-meeting.css' %}">
+    <link rel="stylesheet" href="{% static 'Main/assets/css/owl.css' %}">
+    <link rel="stylesheet" href="{% static 'Main/assets/css/lightbox.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <!-- Sub Header -->
+  <div class="sub-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-sm-8">
+          <div class="left-content">
+            <p>Welcome, <em>{{ request.session.name }}</em></p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-sm-4">
+          <div class="right-icons">
+            <ul>
+              <li><span style="color: #fff; font-size: 13px;">Student Portal</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky solid-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <a href="{% url 'Student:Dashboard' %}" class="logo">
+              EduTrack
+            </a>
+            <ul class="nav">
+              <li><a href="{% url 'Student:Dashboard' %}" class="{% block active_dashboard %}{% endblock %}"><i class="fa-solid fa-chart-pie"></i> Dashboard</a></li>
+              <li class="has-sub">
+                <a href="javascript:void(0)" class="{% block active_activities %}{% endblock %}{% block active_certs %}{% endblock %}"><i class="fa-solid fa-graduation-cap"></i> Academics</a>
+                <ul class="sub-menu">
+                  <li><a href="{% url 'Student:AcademicActivities' %}"><i class="fa-solid fa-calendar-check"></i> Browse Activities</a></li>
+                  <li><a href="{% url 'Student:MyActivities' %}"><i class="fa-solid fa-list-check"></i> My Activities</a></li>
+                  <li><a href="{% url 'Student:UploadCertificate' %}"><i class="fa-solid fa-file-arrow-up"></i> Upload Certificate</a></li>
+                  <li><a href="{% url 'Student:MyCertificates' %}"><i class="fa-solid fa-certificate"></i> My Certificates</a></li>
+                </ul>
+              </li>
+              <li class="has-sub">
+                <a href="javascript:void(0)" class="{% block active_credits %}{% endblock %}{% block active_progress %}{% endblock %}"><i class="fa-solid fa-chart-line"></i> Credits & Progress</a>
+                <ul class="sub-menu">
+                  <li><a href="{% url 'Student:CreditTracker' %}"><i class="fa-solid fa-sliders"></i> Credit Tracker</a></li>
+                  <li><a href="{% url 'Student:AcademicProgress' %}"><i class="fa-solid fa-bars-progress"></i> Academic Progress</a></li>
+                  <li><a href="{% url 'Student:ProgrammeCompletionCheck' %}"><i class="fa-solid fa-circle-check"></i> Completion Audit</a></li>
+                </ul>
+              </li>
+              <li class="has-sub">
+                <a href="javascript:void(0)" class="{% block active_opps %}{% endblock %}{% block active_apps %}{% endblock %}{% block active_tasks %}{% endblock %}{% block active_materials %}{% endblock %}"><i class="fa-solid fa-briefcase"></i> Internships</a>
+                <ul class="sub-menu">
+                  <li><a href="{% url 'Student:BrowseOpportunities' %}"><i class="fa-solid fa-magnifying-glass"></i> Browse Vacancies</a></li>
+                  <li><a href="{% url 'Student:MyApplications' %}"><i class="fa-solid fa-file-lines"></i> My Applications</a></li>
+                  <li><a href="{% url 'Student:Attendance' %}"><i class="fa-solid fa-user-clock"></i> Daily Attendance & Logs</a></li>
+                  <li><a href="{% url 'Student:MyTasks' %}"><i class="fa-solid fa-list-check"></i> My Tasks</a></li>
+                  <li><a href="{% url 'Student:StudyMaterials' %}"><i class="fa-solid fa-book-open"></i> Study Materials</a></li>
+                </ul>
+              </li>
+              <li><a href="{% url 'Student:Reports' %}" class="{% block active_reports %}{% endblock %}"><i class="fa-solid fa-file-invoice"></i> Reports</a></li>
+              <li><a href="{% url 'Student:Notifications' %}" class="{% block active_notifications %}{% endblock %}"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+              <li><a href="{% url 'Student:MyProfile' %}" class="{% block active_profile %}{% endblock %}"><i class="fa-solid fa-user-gear"></i> Profile</a></li>
+              <li><a href="{% url 'Guest:Logout' %}" class="nav-logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+            </ul>
+            <a class='menu-trigger'>
+              <span>Menu</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ***** Header Area End ***** -->
+    
+    <!-- Main Content Area -->
+    <div class="dashboard-main-content animate-fade-in" style="margin-top: 140px !important;">
+        <div class="dashboard-header">
+            <div>
+                <h1>{% block header_title %}Student Portal{% endblock %}</h1>
+                <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">{% block header_subtitle %}Manage your internship activity{% endblock %}</p>
+            </div>
+            <a href="{% url 'Student:MyProfile' %}" class="user-profile-badge" style="text-decoration: none; color: inherit;">
+                <div class="user-name-role">
+                    <span class="name">{{ request.session.name }}</span>
+                    <span class="role">Student</span>
+                </div>
+            </a>
+        </div>
+        
+        {% block content %}
+        {% endblock %}
+    </div>
+
+  <!-- Scripts -->
+  <script src="{% static 'Main/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'Main/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'Main/assets/js/isotope.min.js' %}"></script>
+  <script src="{% static 'Main/assets/js/owl-carousel.js' %}"></script>
+  <script src="{% static 'Main/assets/js/lightbox.js' %}"></script>
+  <script src="{% static 'Main/assets/js/tabs.js' %}"></script>
+  <script src="{% static 'Main/assets/js/video.js' %}"></script>
+  <script src="{% static 'Main/assets/js/slick-slider.js' %}"></script>
+  <script src="{% static 'Main/assets/js/custom.js' %}"></script>
+</body>
+</html>

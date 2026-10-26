@@ -1,0 +1,31 @@
+{% extends 'Company/CompanyBase.html' %}
+{% block title %}Company Notifications | EduTrack-X{% endblock %}
+{% block active_notifications %}active{% endblock %}
+{% block header_title %}Company Notifications{% endblock %}
+{% block header_subtitle %}Alerts for student applications, task submissions, and completion reports{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h3 class="mb-4">Notifications Center</h3>
+    {% if notifications %}
+    <div class="list-group">
+        {% for n in notifications %}
+        <div class="list-group-item p-3 mb-2 rounded" style="border: 1px solid var(--border-color); background: #ffffff;">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <h5 class="mb-0" style="font-size: 16px; color: var(--primary);">
+                    <i class="fa-solid fa-bell me-2"></i> {{ n.title }}
+                </h5>
+                <small class="text-muted">{{ n.created_at|date:"M d, Y H:i" }}</small>
+            </div>
+            <p class="mb-1" style="color: var(--text-main); font-size: 14px;">{{ n.message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center p-5">
+        <i class="fa-solid fa-bell-slash fa-3x text-muted mb-3"></i>
+        <p>No notifications at present.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

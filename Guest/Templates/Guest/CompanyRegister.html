@@ -1,0 +1,71 @@
+{% extends 'Guest/Base.html' %}
+
+{% block title %}Company Registration | EduTrack{% endblock %}
+{% block company_active %}active{% endblock %}
+
+{% block content %}
+<div style="padding-top: 140px; padding-bottom: 50px;">
+    <div class="glass-card" style="max-width: 600px; margin: 0 auto; padding: 35px; background: #ffffff;">
+        <h3 style="color: #0f172a; margin-bottom: 10px; text-align: center; font-weight: 700;">Company Registration</h3>
+        <p style="color: #64748b; text-align: center; margin-bottom: 25px;">Register your company to post internship vacancies</p>
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="txt_name" style="color: #0f172a; font-weight: 600;">Company Name *</label>
+                <input type="text" name="txt_name" id="txt_name" class="form-control" required placeholder="Enter company name">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_email" style="color: #0f172a; font-weight: 600;">Email Address *</label>
+                    <input type="email" name="txt_email" id="txt_email" class="form-control" required placeholder="Enter company email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="txt_contact" style="color: #0f172a; font-weight: 600;">Contact Phone *</label>
+                    <input type="text" name="txt_contact" id="txt_contact" class="form-control" required placeholder="Enter phone number">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label" for="txt_address" style="color: #0f172a; font-weight: 600;">Office Address *</label>
+                <textarea name="txt_address" id="txt_address" rows="2" class="form-control" required placeholder="Enter company address"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_website" style="color: #0f172a; font-weight: 600;">Website URL</label>
+                    <input type="url" name="txt_website" id="txt_website" class="form-control" placeholder="https://company.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="txt_industry" style="color: #0f172a; font-weight: 600;">Industry Sector</label>
+                    <input type="text" name="txt_industry" id="txt_industry" class="form-control" placeholder="e.g. Information Technology">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label" for="txt_description" style="color: #0f172a; font-weight: 600;">Company Overview & Mission</label>
+                <textarea name="txt_description" id="txt_description" rows="3" class="form-control" placeholder="Provide a brief background of your company for students..."></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="logo" style="color: #0f172a; font-weight: 600;">Company Logo</label>
+                    <input type="file" name="logo" id="logo" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="proof" style="color: #0f172a; font-weight: 600;">Proof Document (PDF)</label>
+                    <input type="file" name="proof" id="proof" class="form-control" accept=".pdf,image/*">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label" for="txt_password" style="color: #0f172a; font-weight: 600;">Password *</label>
+                <input type="password" name="txt_password" id="txt_password" class="form-control" required placeholder="Create password">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Complete Company Registration</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

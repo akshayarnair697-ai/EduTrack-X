@@ -1,0 +1,46 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Post Internship Vacancy | Company Console{% endblock %}
+{% block active_post %}active{% endblock %}
+{% block header_title %}Post New Internship Vacancy{% endblock %}
+{% block header_subtitle %}Publish internship opportunities for college students{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 700px; margin: 0 auto; padding: 35px; background: #ffffff;">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="txt_title" style="color: #0f172a; font-weight: 600;">Internship Title *</label>
+            <input type="text" name="txt_title" id="txt_title" class="form-control" required placeholder="e.g. Python Django Intern">
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_description" style="color: #0f172a; font-weight: 600;">Description *</label>
+            <textarea name="txt_description" id="txt_description" rows="4" class="form-control" required placeholder="Provide brief internship description..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_skills" style="color: #0f172a; font-weight: 600;">Required Skills *</label>
+            <input type="text" name="txt_skills" id="txt_skills" class="form-control" required placeholder="e.g. Python, HTML, CSS, MySQL">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="txt_duration" style="color: #0f172a; font-weight: 600;">Duration *</label>
+                <input type="text" name="txt_duration" id="txt_duration" class="form-control" required placeholder="e.g. 3 Months">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txt_stipend" style="color: #0f172a; font-weight: 600;">Stipend *</label>
+                <input type="text" name="txt_stipend" id="txt_stipend" class="form-control" required placeholder="e.g. ₹5,000 / month or Unpaid">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_last_date" style="color: #0f172a; font-weight: 600;">Application Last Date *</label>
+            <input type="date" name="txt_last_date" id="txt_last_date" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Publish Internship Opportunity</button>
+    </form>
+</div>
+{% endblock %}

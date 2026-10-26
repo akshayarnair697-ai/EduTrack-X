@@ -1,0 +1,84 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}Internship Monitoring Overview | EduTrack-X{% endblock %}
+{% block active_internships %}active{% endblock %}
+{% block header_title %}Internship Monitoring Overview{% endblock %}
+{% block header_subtitle %}System-wide statistics and status tracking of student internships{% endblock %}
+
+{% block content %}
+<div class="metrics-grid mb-4">
+    <div class="glass-card metric-card">
+        <span class="metric-title">Posted Vacancies</span>
+        <span class="metric-value">{{ total_opps }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Total Applications</span>
+        <span class="metric-value">{{ total_apps }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Active Interns</span>
+        <span class="metric-value" style="color: var(--primary);">{{ active_interns }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Completed Internships</span>
+        <span class="metric-value" style="color: var(--success);">{{ completed_interns }}</span>
+    </div>
+</div>
+
+<div class="glass-card">
+    <h3 class="mb-4">Student Internship Pipeline</h3>
+    {% if internships %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Opportunity & Company</th>
+                    <th>Faculty Guide</th>
+                    <th>Mode & Dates</th>
+                    <th>Current Status</th>
+                    <th>Credits</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in internships %}
+                <tr>
+                    <td>
+                        <strong>{{ i.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ i.student.student_regno }}</div>
+                    </td>
+                    <td>
+                        <strong>{{ i.opportunity.opportunity_title }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ i.company.company_name }}</div>
+                    </td>
+                    <td>{{ i.assigned_faculty.faculty_name|default:"Unassigned" }}</td>
+                    <td>
+                        <span class="badge badge-secondary" style="background:#e2e8f0; color:#334155;">{{ i.internship_mode }}</span>
+                        {% if i.start_date %}
+                        <div style="font-size:11px; color:var(--text-muted);">{{ i.start_date|date:"M d" }} - {{ i.expected_end_date|date:"M d, Y"|default:"TBD" }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.internship_status == 0 %}<span class="badge badge-pending">Applied</span>
+                        {% elif i.internship_status == 1 %}<span class="badge badge-pending">Under Review</span>
+                        {% elif i.internship_status == 2 %}<span class="badge badge-success">Selected</span>
+                        {% elif i.internship_status == 3 %}<span class="badge badge-primary" style="background:#dbeafe; color:#1d4ed8;">Started</span>
+                        {% elif i.internship_status == 4 %}<span class="badge badge-primary" style="background:#dbeafe; color:#1d4ed8;">In Progress</span>
+                        {% elif i.internship_status == 5 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Report Pending</span>
+                        {% elif i.internship_status == 6 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Faculty Review</span>
+                        {% elif i.internship_status == 7 %}<span class="badge badge-success">Completed</span>
+                        {% elif i.internship_status == 8 %}<span class="badge badge-danger">Cancelled</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>{{ i.credits_awarded|default:i.internship_credit }} Credits</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <p class="text-muted">No internship applications recorded yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

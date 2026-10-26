@@ -1,0 +1,101 @@
+{% extends 'Faculty/FacultyBase.html' %}
+{% block title %}Certificate Verification | EduTrack-X{% endblock %}
+{% block active_certs %}active{% endblock %}
+{% block header_title %}Student Certificate Verification{% endblock %}
+{% block header_subtitle %}Inspect proof, verify certificates, and award official academic credits to students{% endblock %}
+
+{% block content %}
+<div class="glass-card mb-4">
+    <h3 class="mb-4">Pending Certificate Verifications ({{ pending_certs.count }})</h3>
+    {% if pending_certs %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Certificate Title</th>
+                    <th>Category</th>
+                    <th>Issuing Org</th>
+                    <th>Submitted Date</th>
+                    <th>Document</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in pending_certs %}
+                <tr>
+                    <td>
+                        <strong>{{ c.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ c.student.student_regno }}</div>
+                    </td>
+                    <td>
+                        <strong>{{ c.certificate_title }}</strong>
+                        {% if c.certificate_number %}
+                        <div style="font-size:12px; color:var(--text-muted);">No: {{ c.certificate_number }}</div>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge badge-success">{{ c.activity_category.category_name }}</span></td>
+                    <td>{{ c.issuing_organization }}</td>
+                    <td>{{ c.submission_date|date:"M d, Y" }}</td>
+                    <td>
+                        {% if c.certificate_file %}
+                        <a href="{{ c.certificate_file.url }}" target="_blank" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-file-pdf"></i> View File
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'Faculty:VerifyCertificateAction' c.id %}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-user-check"></i> Verify & Award Credit
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <i class="fa-solid fa-circle-check fa-3x text-muted mb-3"></i>
+        <p>No student certificates pending verification.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="glass-card">
+    <h3 class="mb-4">Verification History</h3>
+    {% if all_certs %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Certificate Title</th>
+                    <th>Category</th>
+                    <th>Verified Date</th>
+                    <th>Status</th>
+                    <th>Awarded Credit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in all_certs %}
+                <tr>
+                    <td><strong>{{ c.student.student_name }}</strong></td>
+                    <td>{{ c.certificate_title }}</td>
+                    <td><span class="badge badge-success">{{ c.activity_category.category_name }}</span></td>
+                    <td>{{ c.verification_date|date:"M d, Y"|default:"-" }}</td>
+                    <td>
+                        {% if c.status == 1 %}<span class="badge badge-success">Approved</span>
+                        {% elif c.status == 2 %}<span class="badge badge-danger">Rejected</span>
+                        {% elif c.status == 3 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Resubmit Requested</span>
+                        {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
+                    </td>
+                    <td><strong>{% if c.status == 1 %}+{{ c.confirmed_credit }} Credits{% else %}-{% endif %}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

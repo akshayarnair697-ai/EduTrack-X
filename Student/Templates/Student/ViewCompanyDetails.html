@@ -1,0 +1,54 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}{{ company.company_name }} | Company Profile{% endblock %}
+{% block active_opps %}active{% endblock %}
+{% block header_title %}{{ company.company_name }}{% endblock %}
+{% block header_subtitle %}Corporate Overview & Active Vacancies{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 35px; margin-bottom: 30px; background: #ffffff;">
+    <div style="display: flex; gap: 25px; align-items: flex-start; margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 25px;">
+        {% if company.company_logo %}
+        <img src="{{ company.company_logo.url }}" style="width: 90px; height: 90px; border-radius: 16px; object-fit: cover; border: 2px solid #0284c7;">
+        {% else %}
+        <div style="width: 90px; height: 90px; border-radius: 16px; background: #e0f2fe; border: 2px solid #0284c7; display: flex; align-items: center; justify-content: center; font-size: 36px; color: #0284c7;">🏢</div>
+        {% endif %}
+        <div style="flex: 1;">
+            <h2 style="font-size: 26px; color: #0f172a; font-weight: 800; margin-bottom: 5px;">{{ company.company_name }}</h2>
+            <div style="font-size: 14px; color: #0284c7; margin-bottom: 10px; font-weight: 600;">
+                Industry: <strong>{{ company.company_industry|default:"Corporate Enterprise" }}</strong> | 
+                Contact: <strong>{{ company.company_contact }}</strong> | Email: {{ company.company_email }}
+            </div>
+            <p style="font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 15px;">{{ company.company_description|default:"Enterprise partner providing student internship opportunities." }}</p>
+            <div style="font-size: 13px; color: #64748b;">
+                <strong>Address:</strong> {{ company.company_address }}
+            </div>
+        </div>
+    </div>
+
+    {% if company.company_website %}
+    <div style="display: flex; gap: 15px;">
+        <a href="{{ company.company_website }}" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px;">
+            <i class="fa-solid fa-globe" style="color: #0284c7;"></i> Visit Official Website
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<h3 style="color: #0f172a; margin-bottom: 20px;">Active Opportunities from {{ company.company_name }}</h3>
+{% if opportunities %}
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+    {% for opp in opportunities %}
+    <div class="glass-card" style="padding: 25px; display: flex; flex-direction: column; justify-content: space-between; background: #ffffff;">
+        <div>
+            <h4 style="font-size: 18px; color: #0284c7; font-weight: 700; margin-bottom: 10px;">{{ opp.opportunity_title }}</h4>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">{{ opp.opportunity_description|truncatewords:20 }}</p>
+        </div>
+        <a href="{% url 'Student:ApplyOpportunity' opp.id %}" class="btn btn-primary" style="text-align: center;"><i class="fa-solid fa-paper-plane"></i> Apply for this Role</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p style="color: #64748b;">No open vacancies posted at the moment.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}Certificate Submissions Overview | EduTrack-X{% endblock %}
+{% block active_certs %}active{% endblock %}
+{% block header_title %}Certificate Monitoring Overview{% endblock %}
+{% block header_subtitle %}System-wide oversight of student activity & course certificate verifications{% endblock %}
+
+{% block content %}
+<div class="metrics-grid mb-4">
+    <div class="glass-card metric-card">
+        <span class="metric-title">Total Submitted</span>
+        <span class="metric-value">{{ total_count }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Pending Verification</span>
+        <span class="metric-value" style="color: var(--warning);">{{ pending_count }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Approved Certificates</span>
+        <span class="metric-value" style="color: var(--success);">{{ approved_count }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Rejected Certificates</span>
+        <span class="metric-value" style="color: var(--danger);">{{ rejected_count }}</span>
+    </div>
+</div>
+
+<div class="glass-card">
+    <h3 class="mb-4">Student Certificates Roster</h3>
+    {% if certificates %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Certificate Title</th>
+                    <th>Category</th>
+                    <th>Issuing Organization</th>
+                    <th>Submitted On</th>
+                    <th>Status</th>
+                    <th>Document</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in certificates %}
+                <tr>
+                    <td>
+                        <strong>{{ c.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ c.student.student_regno }}</div>
+                    </td>
+                    <td>
+                        <strong>{{ c.certificate_title }}</strong>
+                        {% if c.certificate_number %}
+                        <div style="font-size:12px; color:var(--text-muted);">No: {{ c.certificate_number }}</div>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge badge-success">{{ c.activity_category.category_name }}</span></td>
+                    <td>{{ c.issuing_organization }}</td>
+                    <td>{{ c.submission_date|date:"M d, Y" }}</td>
+                    <td>
+                        {% if c.status == 0 %}<span class="badge badge-pending">Under Review</span>
+                        {% elif c.status == 1 %}<span class="badge badge-success">Approved ({{ c.confirmed_credit }} Credits)</span>
+                        {% elif c.status == 2 %}<span class="badge badge-danger">Rejected</span>
+                        {% elif c.status == 3 %}<span class="badge badge-pending">Resubmit Requested</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if c.certificate_file %}
+                        <a href="{{ c.certificate_file.url }}" target="_blank" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-file-pdf"></i> View File
+                        </a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <p class="text-muted">No certificates uploaded yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

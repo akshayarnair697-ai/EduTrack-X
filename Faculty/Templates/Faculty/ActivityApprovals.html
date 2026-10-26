@@ -1,0 +1,97 @@
+{% extends 'Faculty/FacultyBase.html' %}
+{% block title %}Activity Approvals | EduTrack-X{% endblock %}
+{% block active_activities %}active{% endblock %}
+{% block header_title %}Student Activity Approvals{% endblock %}
+{% block header_subtitle %}Review and approve student activity registrations for assigned students{% endblock %}
+
+{% block content %}
+<div class="glass-card mb-4">
+    <h3 class="mb-4">Pending Activity Registration Approvals ({{ pending_registrations.count }})</h3>
+    {% if pending_registrations %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Activity Title</th>
+                    <th>Category & Credits</th>
+                    <th>Registration Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in pending_registrations %}
+                <tr>
+                    <td>
+                        <strong>{{ r.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ r.student.student_regno }}</div>
+                    </td>
+                    <td>
+                        <strong>{{ r.activity.activity_title }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ r.activity.conducting_org }}</div>
+                    </td>
+                    <td>
+                        <span class="badge badge-success">{{ r.activity.category.category_name }}</span>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ r.activity.credit_value }} Credits</div>
+                    </td>
+                    <td>{{ r.registration_date|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'Faculty:ApproveActivityAction' r.id 2 %}" class="btn btn-success btn-sm" onclick="return confirm('Approve this activity registration?');">
+                                <i class="fa-solid fa-check"></i> Approve
+                            </a>
+                            <a href="{% url 'Faculty:ApproveActivityAction' r.id 3 %}" class="btn btn-danger btn-sm" onclick="return confirm('Reject this activity registration?');">
+                                <i class="fa-solid fa-xmark"></i> Reject
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <i class="fa-solid fa-circle-check fa-3x text-muted mb-3"></i>
+        <p>No pending activity registrations awaiting your approval.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="glass-card">
+    <h3 class="mb-4">All Activity Registrations Log</h3>
+    {% if all_registrations %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Activity</th>
+                    <th>Registration Date</th>
+                    <th>Status</th>
+                    <th>Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in all_registrations %}
+                <tr>
+                    <td><strong>{{ r.student.student_name }}</strong></td>
+                    <td>{{ r.activity.activity_title }}</td>
+                    <td>{{ r.registration_date|date:"M d, Y" }}</td>
+                    <td>
+                        {% if r.status == 0 %}<span class="badge badge-pending">Registered</span>
+                        {% elif r.status == 2 %}<span class="badge badge-success">Approved</span>
+                        {% elif r.status == 3 %}<span class="badge badge-danger">Rejected</span>
+                        {% elif r.status == 4 %}<span class="badge badge-success">Completed</span>
+                        {% elif r.status == 6 %}<span class="badge badge-success">Credit Awarded</span>
+                        {% else %}<span class="badge badge-pending">Pending</span>{% endif %}
+                    </td>
+                    <td>{{ r.faculty_remark|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

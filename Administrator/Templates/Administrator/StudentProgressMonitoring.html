@@ -1,0 +1,110 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}Student Progress Monitoring | EduTrack-X{% endblock %}
+{% block active_progress %}active{% endblock %}
+{% block header_title %}Student Progress Monitoring{% endblock %}
+{% block header_subtitle %}Track FYUGP credit completion, missing requirements and completion eligibility across all departments{% endblock %}
+
+{% block content %}
+<!-- Filter Form -->
+<div class="glass-card mb-4">
+    <form method="GET" action="" class="row g-3 align-items-center">
+        <div class="col-md-3">
+            <label class="form-label mb-1">Department</label>
+            <select name="dept" class="form-control">
+                <option value="">All Departments</option>
+                {% for d in departments %}
+                <option value="{{ d.id }}" {% if request.GET.dept == d.id|stringformat:"i" %}selected{% endif %}>{{ d.department_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label mb-1">Programme</label>
+            <select name="prog" class="form-control">
+                <option value="">All Programmes</option>
+                {% for p in programmes %}
+                <option value="{{ p.id }}" {% if request.GET.prog == p.id|stringformat:"i" %}selected{% endif %}>{{ p.programme_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label mb-1">Batch</label>
+            <select name="batch" class="form-control">
+                <option value="">All Batches</option>
+                {% for b in batches %}
+                <option value="{{ b.id }}" {% if request.GET.batch == b.id|stringformat:"i" %}selected{% endif %}>{{ b.batch_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-3 mt-4">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa-solid fa-filter"></i> Apply Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Student Progress Cards Grid -->
+<div class="glass-card">
+    <h3 class="mb-4">Student Credit Completion Roster ({{ student_metrics|length }})</h3>
+    {% if student_metrics %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Reg No & Student</th>
+                    <th>Programme & Batch</th>
+                    <th>Credits Earned</th>
+                    <th>Progress</th>
+                    <th>Internship</th>
+                    <th>Eligibility Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in student_metrics %}
+                <tr>
+                    <td>
+                        <strong>{{ m.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ m.student.student_regno }}</div>
+                    </td>
+                    <td>{{ m.student.programme.programme_name }}<br><span style="font-size:12px; color:var(--text-muted);">{{ m.student.batch.batch_name }}</span></td>
+                    <td>
+                        <strong>{{ m.summary.total_earned }} / {{ m.summary.target_required }}</strong> Credits
+                        {% if m.summary.total_pending > 0 %}
+                        <div style="font-size:11px; color:var(--warning);">+{{ m.summary.total_pending }} pending</div>
+                        {% endif %}
+                    </td>
+                    <td style="min-width: 150px;">
+                        <div class="d-flex justify-content-between mb-1" style="font-size: 12px;">
+                            <span>Completion</span>
+                            <span><strong>{{ m.summary.completion_percentage }}%</strong></span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar-fill" style="width: {{ m.summary.completion_percentage }}%;"></div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if m.summary.completed_internship %}
+                        <span class="badge badge-success"><i class="fa-solid fa-check-circle"></i> Completed</span>
+                        {% else %}
+                        <span class="badge badge-pending">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge {{ m.summary.eligibility_class }}">{{ m.summary.eligibility_status }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <i class="fa-solid fa-users-slash fa-3x text-muted mb-3"></i>
+        <p>No active students match the selected filter criteria.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

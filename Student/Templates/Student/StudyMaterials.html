@@ -1,0 +1,43 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}Corporate Study Materials | Student Portal{% endblock %}
+{% block active_materials %}active{% endblock %}
+{% block header_title %}Corporate Training & Study Materials{% endblock %}
+{% block header_subtitle %}Browse and download learning resources published by corporate partners{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px; background: #ffffff;">
+    <h3 style="color: #0f172a; font-size: 20px; margin-bottom: 20px;">Available Learning Resources ({{ materials.count }})</h3>
+
+    {% if materials %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        {% for m in materials %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <div style="width: 46px; height: 46px; border-radius: 12px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 22px;">
+                        <i class="fa-solid fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 16px; color: #0f172a; font-weight: 700; margin: 0;">{{ m.material_title }}</h4>
+                        <div style="font-size: 12px; color: #0284c7; font-weight: 600;">Published by {{ m.company.company_name }}</div>
+                    </div>
+                </div>
+
+                <p style="font-size: 13px; color: #475569; margin-bottom: 15px; line-height: 1.5;">{{ m.material_description }}</p>
+                <div style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Date Posted: {{ m.posted_date }}</div>
+            </div>
+
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                {% if m.material_file %}
+                <a href="{{ m.material_file.url }}" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center;"><i class="fa-solid fa-download"></i> Download Study Material</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #64748b; padding: 40px;">No corporate study materials published yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

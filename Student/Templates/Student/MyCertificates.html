@@ -1,0 +1,80 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}My Submitted Certificates | EduTrack-X{% endblock %}
+{% block active_certs %}active{% endblock %}
+{% block header_title %}My Submitted Certificates{% endblock %}
+{% block header_subtitle %}Track verification status of submitted certificates and awarded credits{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Certificates Overview</h3>
+        <a href="{% url 'Student:UploadCertificate' %}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-cloud-arrow-up"></i> Submit New Certificate
+        </a>
+    </div>
+
+    {% if certificates %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Certificate Title</th>
+                    <th>Category</th>
+                    <th>Issuing Org</th>
+                    <th>Submitted Date</th>
+                    <th>Verification Status</th>
+                    <th>Awarded Credit</th>
+                    <th>Document</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in certificates %}
+                <tr>
+                    <td>
+                        <strong>{{ c.certificate_title }}</strong>
+                        {% if c.certificate_number %}
+                        <div style="font-size:12px; color:var(--text-muted);">No: {{ c.certificate_number }}</div>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge badge-success">{{ c.activity_category.category_name }}</span></td>
+                    <td>{{ c.issuing_organization }}</td>
+                    <td>{{ c.submission_date|date:"M d, Y" }}</td>
+                    <td>
+                        {% if c.status == 0 %}<span class="badge badge-pending">Under Review</span>
+                        {% elif c.status == 1 %}<span class="badge badge-success">Approved</span>
+                        {% elif c.status == 2 %}<span class="badge badge-danger">Rejected</span>
+                        {% elif c.status == 3 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Resubmission Requested</span>
+                        {% endif %}
+
+                        {% if c.faculty_remarks %}
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Remark: {{ c.faculty_remarks }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if c.status == 1 %}
+                        <strong class="text-success">+{{ c.confirmed_credit }} Credits</strong>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if c.certificate_file %}
+                        <a href="{{ c.certificate_file.url }}" target="_blank" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-file-pdf"></i> View File
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-5">
+        <i class="fa-solid fa-certificate fa-3x text-muted mb-3"></i>
+        <p>No certificates submitted yet.</p>
+        <a href="{% url 'Student:UploadCertificate' %}" class="btn btn-primary">Upload Your First Certificate</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

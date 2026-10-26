@@ -1,0 +1,123 @@
+{% extends 'Administrator/AdminBase.html' %}
+
+{% block title %}Companies Directory | Administrator Console{% endblock %}
+{% block active_company %}active{% endblock %}
+{% block header_title %}Company Directory & Verification{% endblock %}
+{% block header_subtitle %}View all corporate companies, verify pending applications, inspect registration proofs, and manage access{% endblock %}
+
+{% block content %}
+<!-- Pending Approvals Section -->
+<div class="glass-card mb-4">
+    <h3 style="color: var(--warning);" class="mb-3"><i class="fa-solid fa-clock-rotate-left me-2"></i> Pending Approvals ({{ pending_companies.count }})</h3>
+    {% if pending_companies %}
+    <div style="display: grid; gap: 20px;">
+        {% for c in pending_companies %}
+        <div style="background: #fffbebf5; border: 1px solid #fde68a; border-radius: 16px; padding: 20px;">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h4 style="font-size: 18px; color: #0f172a; font-weight: 700;" class="mb-1">{{ c.company_name }}</h4>
+                    <div style="font-size: 13px; color: var(--primary);">Industry: <strong>{{ c.company_industry|default:"IT & Software" }}</strong></div>
+                </div>
+                <span class="badge badge-warning">Pending Review</span>
+            </div>
+
+            <div class="row g-3 bg-white p-3 rounded mb-3" style="border: 1px solid #e2e8f0; font-size: 13px;">
+                <div class="col-md-6">
+                    <div><strong>Email:</strong> {{ c.company_email }}</div>
+                    <div><strong>Contact:</strong> {{ c.company_contact }}</div>
+                    <div><strong>Location:</strong> {{ c.company_address }}</div>
+                </div>
+                <div class="col-md-6">
+                    {% if c.company_website %}
+                    <div><strong>Website:</strong> <a href="{{ c.company_website }}" target="_blank" class="text-primary">{{ c.company_website }}</a></div>
+                    {% endif %}
+                    {% if c.company_proof %}
+                    <div class="mt-1"><strong>Registration Proof:</strong> <a href="{{ c.company_proof.url }}" target="_blank" class="text-success"><i class="fa-solid fa-file-pdf me-1"></i> View Proof File</a></div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a href="{% url 'Administrator:ApproveCompanyAction' c.id 1 %}" class="btn btn-success w-100"><i class="fa-solid fa-check me-1"></i> Approve Registration</a>
+                <a href="{% url 'Administrator:ApproveCompanyAction' c.id 2 %}" class="btn btn-danger w-50"><i class="fa-solid fa-xmark me-1"></i> Reject</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted mb-0">No pending company registrations at present.</p>
+    {% endif %}
+</div>
+
+<!-- All Registered Companies Section -->
+<div class="glass-card">
+    <h3 class="mb-4"><i class="fa-solid fa-building me-2 text-primary"></i> All Registered Companies ({{ all_companies.count }})</h3>
+    {% if all_companies %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Company Name</th>
+                    <th>Industry & Location</th>
+                    <th>Contact Info</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in all_companies %}
+                <tr>
+                    <td>
+                        <strong>{{ c.company_name }}</strong>
+                        {% if c.company_website %}
+                        <div style="font-size:12px;"><a href="{{ c.company_website }}" target="_blank" style="color:var(--primary);">{{ c.company_website }}</a></div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong>{{ c.company_industry|default:"Software" }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ c.company_address|truncatewords:6 }}</div>
+                    </td>
+                    <td>
+                        {{ c.company_email }}
+                        <div style="font-size:12px; color:var(--text-muted);">Ph: {{ c.company_contact }}</div>
+                    </td>
+                    <td>
+                        {% if c.company_status == 1 %}
+                        <span class="badge badge-success"><i class="fa-solid fa-circle-check me-1"></i> Active / Approved</span>
+                        {% elif c.company_status == 0 %}
+                        <span class="badge badge-warning">Pending Review</span>
+                        {% else %}
+                        <span class="badge badge-danger">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            {% if c.company_status != 1 %}
+                            <a href="{% url 'Administrator:ApproveCompanyAction' c.id 1 %}" class="btn btn-success btn-sm" title="Approve / Activate">
+                                <i class="fa-solid fa-check"></i> Approve
+                            </a>
+                            {% else %}
+                            <a href="{% url 'Administrator:ApproveCompanyAction' c.id 2 %}" class="btn btn-danger btn-sm" title="Deactivate / Reject">
+                                <i class="fa-solid fa-ban"></i> Deactivate
+                            </a>
+                            {% endif %}
+
+                            {% if c.company_proof %}
+                            <a href="{{ c.company_proof.url }}" target="_blank" class="btn btn-secondary btn-sm" title="View Document">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <p class="text-muted">No companies registered in the system yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

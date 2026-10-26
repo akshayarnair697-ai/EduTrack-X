@@ -1,0 +1,25 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Intern Evaluation | Company Console{% endblock %}
+{% block active_interns %}active{% endblock %}
+{% block header_title %}Student Internship Evaluation{% endblock %}
+{% block header_subtitle %}Intern: {{ internship.student.student_name }} | Title: {{ internship.opportunity.opportunity_title }}{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 700px; margin: 0 auto; padding: 35px;">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="txt_marks">Overall Performance Score (0 - 100) *</label>
+            <input type="number" min="0" max="100" name="txt_marks" id="txt_marks" class="form-control" value="85" required>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_feedback">Company Feedback & Remarks *</label>
+            <textarea name="txt_feedback" id="txt_feedback" rows="4" class="form-control" required placeholder="Provide feedback regarding intern performance and task completion..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Submit Evaluation & Issue Certificate</button>
+    </form>
+</div>
+{% endblock %}

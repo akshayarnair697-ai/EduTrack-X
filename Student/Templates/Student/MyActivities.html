@@ -1,0 +1,82 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}My Academic Activities | EduTrack-X{% endblock %}
+{% block active_activities %}active{% endblock %}
+{% block header_title %}My Registered Activities{% endblock %}
+{% block header_subtitle %}Track status of enrolled academic activities, completion and proof submission{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>Enrolled Activities Roster</h3>
+        <a href="{% url 'Student:AcademicActivities' %}" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus"></i> Browse More Activities
+        </a>
+    </div>
+
+    {% if registrations %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Activity Title</th>
+                    <th>Category</th>
+                    <th>Dates / Deadline</th>
+                    <th>Credits</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in registrations %}
+                <tr>
+                    <td>
+                        <strong>{{ r.activity.activity_title }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ r.activity.conducting_org }}</div>
+                    </td>
+                    <td><span class="badge badge-success">{{ r.activity.category.category_name }}</span></td>
+                    <td>
+                        {{ r.activity.start_date|date:"M d, Y" }}
+                        <div style="font-size:12px; color:var(--text-muted);">Deadline: {{ r.activity.registration_deadline|date:"M d, Y" }}</div>
+                    </td>
+                    <td><strong>{{ r.activity.credit_value }} Credits</strong></td>
+                    <td>
+                        {% if r.status == 0 %}<span class="badge badge-pending">Registered</span>
+                        {% elif r.status == 1 %}<span class="badge badge-pending">Pending Faculty Approval</span>
+                        {% elif r.status == 2 %}<span class="badge badge-success">Approved</span>
+                        {% elif r.status == 3 %}<span class="badge badge-danger">Rejected</span>
+                        {% elif r.status == 4 %}<span class="badge badge-success">Completed</span>
+                        {% elif r.status == 5 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Certificate Submitted</span>
+                        {% elif r.status == 6 %}<span class="badge badge-success">Credit Awarded</span>
+                        {% endif %}
+
+                        {% if r.faculty_remark %}
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Remark: {{ r.faculty_remark }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            {% if r.status in 01 %}
+                            <a href="{% url 'Student:CancelActivityRegistration' r.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Cancel registration?');">Cancel</a>
+                            {% endif %}
+                            
+                            {% if r.status in 0124 %}
+                            <a href="{% url 'Student:UploadCertificate' %}" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-upload"></i> Submit Proof
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-5">
+        <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
+        <p>You have not registered for any academic activities yet.</p>
+        <a href="{% url 'Student:AcademicActivities' %}" class="btn btn-primary">Browse Available Activities</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

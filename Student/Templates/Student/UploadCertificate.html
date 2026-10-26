@@ -1,0 +1,80 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}Upload Certificate | EduTrack-X{% endblock %}
+{% block active_certs %}active{% endblock %}
+{% block header_title %}Submit Activity Certificate{% endblock %}
+{% block header_subtitle %}Submit completed course/activity certificates for faculty verification and credit generation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <h3 class="mb-4">Certificate Submission Form</h3>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label class="form-label">Certificate Title *</label>
+                    <input type="text" name="txt_title" class="form-control" placeholder="e.g. Certificate of Excellence - Web Development Workshop" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Activity Category *</label>
+                        <select name="sel_category" class="form-control" required>
+                            <option value="">-- Select Credit Category --</option>
+                            {% for c in categories %}
+                            <option value="{{ c.id }}">{{ c.category_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Related Enrolled Activity (Optional)</label>
+                        <select name="sel_activity" class="form-control">
+                            <option value="">-- Independent Certificate / Course --</option>
+                            {% for act in my_activities %}
+                            <option value="{{ act.id }}">{{ act.activity.activity_title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Issuing Organization *</label>
+                        <input type="text" name="txt_issuing_org" class="form-control" placeholder="e.g. NPTEL, Coursera, IIT Bombay, College Dept" required>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Certificate Number (Optional)</label>
+                        <input type="text" name="txt_cert_no" class="form-control" placeholder="e.g. CERT-109283">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Issue Date *</label>
+                        <input type="date" name="txt_issue_date" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Upload Certificate File (PDF / Image) *</label>
+                        <input type="file" name="file_certificate" class="form-control" accept=".pdf,.png,.jpg,.jpeg" required>
+                    </div>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Additional Remarks / Details</label>
+                    <textarea name="txt_remarks" class="form-control" rows="3" placeholder="Course hours, skills covered or special notes for faculty verification"></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Certificate for Verification
+                    </button>
+                    <a href="{% url 'Student:MyCertificates' %}" class="btn btn-secondary w-50">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}Internship Progress Updates | EduTrack-X{% endblock %}
+{% block active_apps %}active{% endblock %}
+{% block header_title %}Internship Progress Monitoring{% endblock %}
+{% block header_subtitle %}{{ internship.opportunity.opportunity_title }} at {{ internship.company.company_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Submit Update Form -->
+    <div class="col-lg-5 mb-4">
+        <div class="glass-card">
+            <h3 class="mb-4">Submit Weekly / Periodic Report</h3>
+            <form method="POST" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label class="form-label">Work Completed / Achievements *</label>
+                    <textarea name="txt_work_completed" class="form-control" rows="4" placeholder="Describe key tasks accomplished, modules developed, or assignments finished" required></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Skills / Technologies Learned</label>
+                    <input type="text" name="txt_skills_learned" class="form-control" placeholder="e.g. Django, REST APIs, PostgreSQL">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Challenges Faced</label>
+                    <input type="text" name="txt_challenges" class="form-control" placeholder="Technical blockers or questions">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Hours / Days Completed</label>
+                    <input type="number" name="txt_hours" class="form-control" placeholder="e.g. 40 Hours" min="1" max="1000">
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Supporting Document / Log Sheet (Optional)</label>
+                    <input type="file" name="file_doc" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-paper-plane"></i> Submit Progress Update
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Progress Updates History -->
+    <div class="col-lg-7">
+        <div class="glass-card">
+            <h3 class="mb-4">Submitted Progress Log ({{ progress_reports.count }})</h3>
+            {% if progress_reports %}
+            <div class="custom-table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Reporting Date</th>
+                            <th>Work Completed</th>
+                            <th>Hours</th>
+                            <th>Faculty Review</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in progress_reports %}
+                        <tr>
+                            <td><strong>{{ r.reporting_date|date:"M d, Y" }}</strong></td>
+                            <td>
+                                {{ r.work_completed|linebreaks }}
+                                {% if r.skills_learned %}
+                                <div style="font-size: 12px; color: var(--primary);"><strong>Skills:</strong> {{ r.skills_learned }}</div>
+                                {% endif %}
+                                {% if r.supporting_document %}
+                                <a href="{{ r.supporting_document.url }}" target="_blank" style="font-size:12px;" class="mt-1 d-inline-block"><i class="fa-solid fa-paperclip"></i> View Document</a>
+                                {% endif %}
+                            </td>
+                            <td>{{ r.hours_completed }} hrs</td>
+                            <td>
+                                {% if r.progress_status == 1 %}
+                                <span class="badge badge-success">Reviewed</span>
+                                {% else %}
+                                <span class="badge badge-pending">Submitted</span>
+                                {% endif %}
+
+                                {% if r.faculty_remark %}
+                                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Remark: {{ r.faculty_remark }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center p-4">
+                <i class="fa-solid fa-list-check fa-3x text-muted mb-3"></i>
+                <p>No progress updates submitted yet for this internship.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

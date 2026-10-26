@@ -1,0 +1,47 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}My Applications | Student Portal{% endblock %}
+{% block active_apps %}active{% endblock %}
+{% block header_title %}My Applications{% endblock %}
+{% block header_subtitle %}Track status of your internship applications{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px; background: #ffffff;">
+    {% if applications %}
+    <div style="overflow-x: auto;">
+        <table class="table" style="width: 100%; color: #0f172a; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Opportunity</th>
+                    <th style="padding: 12px; color: #475569;">Company</th>
+                    <th style="padding: 12px; color: #475569;">Applied Date</th>
+                    <th style="padding: 12px; color: #475569;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 14px; font-weight: 700; color: #0284c7;">{{ app.opportunity.opportunity_title }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #0f172a; font-weight: 600;">{{ app.company.company_name }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #64748b;">{{ app.applied_date }}</td>
+                    <td style="padding: 14px;">
+                        {% if app.internship_status == 1 %}
+                        <span style="background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">Accepted / Active</span>
+                        {% elif app.internship_status == 2 %}
+                        <span style="background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">Rejected</span>
+                        {% elif app.internship_status == 3 %}
+                        <span style="background: #f3e8ff; color: #6b21a8; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">Completed</span>
+                        {% else %}
+                        <span style="background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">Applied</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #64748b; padding: 40px;">You haven't submitted any internship applications yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

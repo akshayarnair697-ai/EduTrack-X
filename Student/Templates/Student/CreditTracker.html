@@ -1,0 +1,95 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}FYUGP Credit Tracker | EduTrack-X{% endblock %}
+{% block active_credits %}active{% endblock %}
+{% block header_title %}FYUGP Credit Tracker{% endblock %}
+{% block header_subtitle %}Real-time summary of approved credits earned across SEC, VAC, MDC, Minor, and Internship categories{% endblock %}
+
+{% block content %}
+<!-- Overview Metrics -->
+<div class="metrics-grid mb-4">
+    <div class="glass-card metric-card">
+        <span class="metric-title">Programme Target</span>
+        <span class="metric-value">{{ summary.target_required }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Total Approved Earned</span>
+        <span class="metric-value" style="color: var(--success);">{{ summary.total_earned }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Pending Verification</span>
+        <span class="metric-value" style="color: var(--warning);">{{ summary.total_pending }}</span>
+    </div>
+    <div class="glass-card metric-card">
+        <span class="metric-title">Remaining Credits</span>
+        <span class="metric-value" style="color: var(--danger);">{{ summary.total_remaining }}</span>
+    </div>
+</div>
+
+<!-- Category-Wise Credit Progress Bars -->
+<div class="glass-card mb-4">
+    <h3 class="mb-4"><i class="fa-solid fa-chart-bar text-primary me-2"></i> Category-Wise Credit Progress</h3>
+    <div class="row">
+        {% for cat in summary.category_summary %}
+        <div class="col-md-6 mb-4">
+            <div class="p-3 rounded" style="background:#ffffff; border:1px solid #e2e8f0;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong style="font-size: 16px;">{{ cat.category_name }}</strong>
+                    <span class="badge {% if cat.earned >= cat.required and cat.required > 0 %}badge-success{% else %}badge-pending{% endif %}">
+                        {{ cat.status }}
+                    </span>
+                </div>
+                <div class="d-flex justify-content-between mb-1" style="font-size: 13px; color: var(--text-muted);">
+                    <span>Earned: <strong>{{ cat.earned }}</strong> / Required: <strong>{{ cat.required }}</strong></span>
+                    <span>Remaining: <strong>{{ cat.remaining }}</strong></span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar-fill" style="width: {{ cat.percentage }}%;"></div>
+                </div>
+                {% if cat.pending > 0 %}
+                <div style="font-size: 11px; color: var(--warning);" class="mt-1">
+                    <i class="fa-solid fa-clock"></i> {{ cat.pending }} credits pending verification
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Semester-Wise Summary Table -->
+<div class="glass-card">
+    <h3 class="mb-4"><i class="fa-solid fa-graduation-cap text-primary me-2"></i> Approved Credit Ledger</h3>
+    {% if summary.approved_credits_list %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Credit Category / Label</th>
+                    <th>Source Type</th>
+                    <th>Semester</th>
+                    <th>Credits</th>
+                    <th>Approved By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in summary.approved_credits_list %}
+                <tr>
+                    <td>{{ c.credit_date|date:"M d, Y" }}</td>
+                    <td><strong>{{ c.credit_type|default:c.credit_category.category_name }}</strong></td>
+                    <td><span class="badge badge-success">{{ c.source_type }}</span></td>
+                    <td>Sem {{ c.semester|default:"1" }}</td>
+                    <td><strong class="text-success">+{{ c.credit_value }} Credits</strong></td>
+                    <td>{{ c.approved_by.faculty_name|default:"System Admin" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <p class="text-muted">No approved credits recorded yet in your ledger.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

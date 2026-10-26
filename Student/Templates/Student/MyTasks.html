@@ -1,0 +1,70 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}My Assigned Tasks | Student Portal{% endblock %}
+{% block active_tasks %}active{% endblock %}
+{% block header_title %}My Assigned Tasks & Work Desk{% endblock %}
+{% block header_subtitle %}View corporate tasks, update execution progress, and submit completed project files{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px; background: #ffffff;">
+    <h3 style="color: #0f172a; font-size: 20px; margin-bottom: 20px;">Assigned Tasks ({{ tasks.count }})</h3>
+
+    {% if tasks %}
+    <div style="overflow-x: auto;">
+        <table class="table" style="width: 100%; color: #0f172a; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Company</th>
+                    <th style="padding: 12px; color: #475569;">Task Title</th>
+                    <th style="padding: 12px; color: #475569;">Deadline</th>
+                    <th style="padding: 12px; color: #475569;">Status</th>
+                    <th style="padding: 12px; color: #475569;">Reference Specs</th>
+                    <th style="padding: 12px; color: #475569;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tasks %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 14px; font-weight: 700; color: #0f172a;">
+                        {{ t.company.company_name }}
+                    </td>
+                    <td style="padding: 14px; font-weight: 600; color: #0284c7;">
+                        <div>{{ t.task_title }}</div>
+                        <div style="font-size: 12px; color: #64748b; font-weight: normal;">{{ t.task_description|truncatewords:10 }}</div>
+                    </td>
+                    <td style="padding: 14px; font-size: 13px; color: #334155;">
+                        {{ t.task_deadline|default:"No deadline" }}
+                    </td>
+                    <td style="padding: 14px; font-size: 13px;">
+                        {% if t.task_status == 2 %}
+                        <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 6px; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Completed</span>
+                        {% elif t.task_status == 1 %}
+                        <span style="background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 6px; font-weight: 700;"><i class="fa-solid fa-spinner"></i> In Progress</span>
+                        {% else %}
+                        <span style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; font-weight: 700;"><i class="fa-solid fa-clock"></i> Assigned / Pending</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px; font-size: 13px;">
+                        {% if t.task_file %}
+                        <a href="{{ t.task_file.url }}" target="_blank" class="btn btn-secondary btn-sm" style="padding: 4px 10px; font-size: 12px;">
+                            <i class="fa-solid fa-paperclip"></i> View Specs
+                        </a>
+                        {% else %}
+                        <span style="color: #64748b;">No attachment</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px;">
+                        <a href="{% url 'Student:SubmitTask' t.id %}" class="btn btn-primary btn-sm" style="padding: 6px 12px; font-size: 12px;">
+                            <i class="fa-solid fa-pen-to-square"></i> Update & Submit Work
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #64748b; padding: 40px;">No tasks assigned to you by your corporate company yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

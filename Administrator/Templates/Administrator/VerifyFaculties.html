@@ -1,0 +1,86 @@
+{% extends 'Administrator/AdminBase.html' %}
+
+{% block title %}Verify Faculty | Administrator Console{% endblock %}
+{% block active_faculty %}active{% endblock %}
+{% block header_title %}Faculty Registration Queue{% endblock %}
+{% block header_subtitle %}Audit faculty designations, employee IDs, and departments before granting guide permissions{% endblock %}
+
+{% block content %}
+<div class="card" style="padding: 25px; margin-bottom: 25px; background: #ffffff;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: #0f172a; font-size: 18px; margin: 0;"><i class="fa-solid fa-chalkboard-user"></i> Faculty Guide Management</h3>
+        <a href="{% url 'Administrator:AddFaculty' %}" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Onboard New Faculty Guide</a>
+    </div>
+
+    {% if pending_faculty %}
+    <h4 style="color: #92400e; font-size: 16px; margin-bottom: 15px;">Pending Registration Approvals ({{ pending_faculty.count }})</h4>
+    <div style="overflow-x: auto; margin-bottom: 30px;">
+        <table class="table" style="width: 100%; color: #0f172a; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Faculty Name</th>
+                    <th style="padding: 12px; color: #475569;">Department</th>
+                    <th style="padding: 12px; color: #475569;">Email & Phone</th>
+                    <th style="padding: 12px; color: #475569;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in pending_faculty %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 14px;">
+                        <div style="font-weight: 700; color: #0f172a; font-size: 15px;">{{ f.faculty_name }}</div>
+                    </td>
+                    <td style="padding: 14px; font-size: 13px; color: #0f172a;">{{ f.department.department_name }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #0f172a;">{{ f.faculty_email }}<br><span style="color: #64748b;">{{ f.faculty_contact }}</span></td>
+                    <td style="padding: 14px;">
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{% url 'Administrator:ApproveFacultyAction' f.id 1 %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-check"></i> Approve</a>
+                            <a href="{% url 'Administrator:ApproveFacultyAction' f.id 2 %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; background: #fee2e2; color: #991b1b; border-color: #fca5a5;"><i class="fa-solid fa-xmark"></i> Reject</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <h4 style="color: #0284c7; font-size: 16px; margin-bottom: 15px;">Active Faculty Guide Directory</h4>
+    {% if all_faculties %}
+    <div style="overflow-x: auto;">
+        <table class="table" style="width: 100%; color: #0f172a; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Faculty Name</th>
+                    <th style="padding: 12px; color: #475569;">Department</th>
+                    <th style="padding: 12px; color: #475569;">Email</th>
+                    <th style="padding: 12px; color: #475569;">Contact Phone</th>
+                    <th style="padding: 12px; color: #475569;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in all_faculties %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 14px; font-weight: 700; color: #0f172a;">{{ f.faculty_name }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #059669; font-weight: 600;">{{ f.department.department_name }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #0f172a;">{{ f.faculty_email }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #64748b;">{{ f.faculty_contact }}</td>
+                    <td style="padding: 14px; font-size: 13px;">
+                        {% if f.faculty_status == 1 %}
+                        <span style="background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 6px; font-weight: 600;">Active</span>
+                        {% elif f.faculty_status == 0 %}
+                        <span style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 6px; font-weight: 600;">Pending</span>
+                        {% else %}
+                        <span style="background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 6px; font-weight: 600;">Rejected</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: #64748b;">No faculty records registered.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}Admission Batch Management | EduTrack-X{% endblock %}
+{% block header_title %}Admission Batch Management{% endblock %}
+{% block header_subtitle %}Configure and manage student admission batches{% endblock %}
+{% block active_batches %}active{% endblock %}
+
+{% block content %}
+<style>
+    .crud-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr;
+        gap: 30px;
+    }
+</style>
+<div class="crud-layout animate-fade-in">
+    <!-- Left Column: Add form -->
+    <div class="glass-card" style="height: fit-content;">
+        <h3 style="font-family: var(--font-outfit); font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+            <i class="fa-solid fa-folder-plus" style="color: var(--primary); margin-right: 8px;"></i>Register Admission Batch
+        </h3>
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label class="form-label" for="txt_name">Batch Name</label>
+                <input class="form-control" type="text" name="txt_name" id="txt_name" required placeholder="e.g. 2024 Admissions">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                <i class="fa-solid fa-save" style="margin-right: 6px;"></i> Create Batch
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Column: List -->
+    <div class="glass-card">
+        <h3 style="font-family: var(--font-outfit); font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+            <i class="fa-solid fa-list-ul" style="color: var(--primary); margin-right: 8px;"></i>Admission Batches Board
+        </h3>
+        
+        {% if batches %}
+        <div class="custom-table-container">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+                        <th style="padding: 12px; color: var(--text-muted); font-size: 13px; font-weight: 600;">Batch Name</th>
+                        <th style="padding: 12px; color: var(--text-muted); font-size: 13px; font-weight: 600;">Status</th>
+                        <th style="padding: 12px; color: var(--text-muted); font-size: 13px; font-weight: 600; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in batches %}
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td style="padding: 12px; font-weight: 600; color: var(--text-main);">{{ b.batch_name }}</td>
+                        <td style="padding: 12px;">
+                            {% if b.batch_status == 1 %}
+                            <span class="badge badge-success">Active</span>
+                            {% else %}
+                            <span class="badge badge-pending">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px; text-align: right;">
+                            <a href="{% url 'Administrator:del_batch' b.id %}" class="btn btn-danger" onclick="return confirm('Soft-delete this admission batch?')" style="padding: 6px 12px; font-size: 11px;">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); text-align: center; margin-top: 40px;">No admission batch registry entries logged.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

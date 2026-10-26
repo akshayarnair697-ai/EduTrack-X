@@ -1,0 +1,93 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}Programme Completion Checker | EduTrack-X{% endblock %}
+{% block active_progress %}active{% endblock %}
+{% block header_title %}Programme Completion Eligibility Checker{% endblock %}
+{% block header_subtitle %}Automatic verification of your FYUGP degree eligibility status{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <div class="glass-card mb-4 text-center p-4">
+            <h2 class="mb-3">Official FYUGP Eligibility Status</h2>
+            <div class="d-inline-block mb-3">
+                <span class="badge {{ summary.eligibility_class }} p-3" style="font-size: 18px; border-radius: 12px;">
+                    <i class="fa-solid fa-graduation-cap me-2"></i> {{ summary.eligibility_status }}
+                </span>
+            </div>
+
+            <p style="font-size: 15px; color: var(--text-muted);" class="mb-0">
+                Student: <strong>{{ student.student_name }}</strong> (Reg No: <strong>{{ student.student_regno }}</strong>) | Programme: <strong>{{ student.programme.programme_name }}</strong>
+            </p>
+        </div>
+
+        <div class="glass-card">
+            <h3 class="mb-4">Requirement Checklist Verification</h3>
+            <div class="custom-table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Requirement Criteria</th>
+                            <th>Target Standard</th>
+                            <th>Current Status</th>
+                            <th>Verification</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Total Programme Credits</strong></td>
+                            <td>{{ summary.target_required }} Credits</td>
+                            <td>{{ summary.total_earned }} Credits Earned</td>
+                            <td>
+                                {% if summary.total_earned >= summary.target_required %}
+                                <span class="badge badge-success"><i class="fa-solid fa-check me-1"></i> Satisfied</span>
+                                {% else %}
+                                <span class="badge badge-danger"><i class="fa-solid fa-xmark me-1"></i> Pending ({{ summary.total_remaining }} short)</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% for cat in summary.category_summary %}
+                        {% if cat.required > 0 %}
+                        <tr>
+                            <td><strong>{{ cat.category_name }} Category</strong></td>
+                            <td>{{ cat.required }} Credits</td>
+                            <td>{{ cat.earned }} Credits Earned</td>
+                            <td>
+                                {% if cat.earned >= cat.required %}
+                                <span class="badge badge-success"><i class="fa-solid fa-check me-1"></i> Satisfied</span>
+                                {% else %}
+                                <span class="badge badge-danger"><i class="fa-solid fa-xmark me-1"></i> Pending ({{ cat.remaining }} short)</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+
+                        <tr>
+                            <td><strong>Mandatory Internship</strong></td>
+                            <td>1 Completed Internship</td>
+                            <td>{% if summary.completed_internship %}1 Completed{% else %}None Completed{% endif %}</td>
+                            <td>
+                                {% if summary.completed_internship %}
+                                <span class="badge badge-success"><i class="fa-solid fa-check me-1"></i> Satisfied</span>
+                                {% else %}
+                                <span class="badge badge-danger"><i class="fa-solid fa-xmark me-1"></i> Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between align-items-center">
+                <a href="{% url 'Student:Reports' %}" class="btn btn-secondary">
+                    <i class="fa-solid fa-file-invoice"></i> Download Achievement Summary
+                </a>
+                <a href="{% url 'Student:CreditTracker' %}" class="btn btn-primary">
+                    <i class="fa-solid fa-arrow-right"></i> View Credit Tracker
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

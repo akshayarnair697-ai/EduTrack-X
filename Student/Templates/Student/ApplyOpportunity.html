@@ -1,0 +1,35 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}Apply Opportunity | Student Portal{% endblock %}
+{% block active_opps %}active{% endblock %}
+{% block header_title %}Apply for Internship{% endblock %}
+{% block header_subtitle %}Opportunity: {{ opportunity.opportunity_title }} ({{ opportunity.company.company_name }}){% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 700px; margin: 0 auto; padding: 35px; background: #ffffff;">
+    {% if existing %}
+    <div style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 20px; text-align: center;">
+        <h4 style="color: #0284c7; margin-bottom: 8px; font-weight: 700;">Already Applied!</h4>
+        <p style="color: #334155; font-size: 14px; margin-bottom: 15px;">You submitted an application for this opportunity on {{ existing.applied_date }}. Status: <strong style="color: #0284c7;">{% if existing.internship_status == 1 %}Accepted{% elif existing.internship_status == 2 %}Rejected{% elif existing.internship_status == 3 %}Completed{% else %}Applied{% endif %}</strong></p>
+        <a href="{% url 'Student:MyApplications' %}" class="btn btn-primary">Go to My Applications Desk</a>
+    </div>
+    {% else %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 20px; font-size: 14px; color: #0f172a; line-height: 1.6;">
+            <div><strong>Company:</strong> {{ opportunity.company.company_name }}</div>
+            <div><strong>Duration:</strong> {{ opportunity.duration }}</div>
+            <div><strong>Stipend:</strong> {{ opportunity.stipend }}</div>
+            <div><strong>Required Skills:</strong> {{ opportunity.skills_required }}</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="txt_cover_letter" style="color: #0f172a; font-weight: 600;">Cover Letter & Statement of Purpose *</label>
+            <textarea name="txt_cover_letter" id="txt_cover_letter" rows="5" class="form-control" required placeholder="Explain why you are qualified for this internship, relevant academic projects, skills, and learning goals..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 12px; font-weight: 600;">Confirm & Submit Internship Application</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,179 @@
+{% extends 'Faculty/FacultyBase.html' %}
+{% block title %}Intern Attendance Audit | EduTrack-X{% endblock %}
+{% block active_internships %}active{% endblock %}
+{% block header_title %}Student Internship Attendance & Work Hours{% endblock %}
+{% block header_subtitle %}Student: {{ internship.student.student_name }} ({{ internship.student.student_regno }}) | {{ internship.company.company_name }}{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'Faculty:InternshipMonitoring' %}" class="btn btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left me-1"></i> Back to Internship Pipeline
+    </a>
+</div>
+
+<!-- Intern Details & Overview Banner -->
+<div class="glass-card mb-4" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <h4 class="mb-1" style="font-weight: 700; color: #1e293b;">
+                <i class="fa-solid fa-user-graduate text-primary me-2"></i>{{ internship.student.student_name }}
+            </h4>
+            <div style="font-size: 13px; color: #64748b; margin-bottom: 6px;">
+                <strong>Reg No:</strong> {{ internship.student.student_regno }} &bull; 
+                <strong>Department:</strong> {{ internship.student.department.department_name|default:"General" }}
+            </div>
+            <div style="font-size: 13px; color: #334155;">
+                <i class="fa-solid fa-building me-1 text-secondary"></i> <strong>Company:</strong> {{ internship.company.company_name }} &bull; 
+                <i class="fa-solid fa-briefcase me-1 text-secondary"></i> <strong>Role:</strong> {{ internship.opportunity.opportunity_title }}
+            </div>
+        </div>
+        <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <span class="badge" style="background: #e0e7ff; color: #3730a3; font-size: 12px; padding: 6px 12px; border-radius: 6px;">
+                Mode: {{ internship.internship_mode }}
+            </span>
+            <div style="font-size: 12px; color: #64748b; margin-top: 6px;">
+                Period: {{ internship.start_date|date:"M d, Y"|default:"TBD" }} - {{ internship.expected_end_date|date:"M d, Y"|default:"TBD" }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Statistics Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="glass-card text-center p-3" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Attendance Rate</div>
+            <div style="font-size: 26px; font-weight: 800; margin-top: 4px; color: {% if stats.attendance_rate >= 80 %}#16a34a{% elif stats.attendance_rate >= 60 %}#d97706{% else %}#dc2626{% endif %};">
+                {{ stats.attendance_rate }}%
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">{{ stats.present_days }} / {{ stats.total_days }} days</div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="glass-card text-center p-3" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Total Hours Spent</div>
+            <div style="font-size: 26px; font-weight: 800; color: #2563eb; margin-top: 4px;">
+                {{ stats.total_hours }} <span style="font-size: 15px; font-weight: 600;">hrs</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Logged in daily sessions</div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="glass-card text-center p-3" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Verified By Mentor</div>
+            <div style="font-size: 26px; font-weight: 800; color: #059669; margin-top: 4px;">
+                {{ stats.verified_days }} <span style="font-size: 15px; font-weight: 600;">days</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Company supervisor verified</div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="glass-card text-center p-3" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Leaves & Absences</div>
+            <div style="font-size: 26px; font-weight: 800; color: #d97706; margin-top: 4px;">
+                {{ stats.absent_days|add:stats.leave_days }} <span style="font-size: 15px; font-weight: 600;">days</span>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">{{ stats.leave_days }} on leave, {{ stats.absent_days }} absent</div>
+        </div>
+    </div>
+</div>
+
+<!-- Daily Attendance & Task Work Log Table -->
+<div class="glass-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 22px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 style="font-weight: 700; color: #1e293b; margin-bottom: 0;">
+            <i class="fa-solid fa-list-check text-primary me-2"></i>Daily Work Hours & Attendance Audit Log
+        </h4>
+        <span class="badge" style="background: #f1f5f9; color: #475569; font-size: 12px;">{{ stats.total_days }} Recorded Dates</span>
+    </div>
+
+    {% if attendance_records %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time Window</th>
+                    <th>Hours Worked</th>
+                    <th>Status</th>
+                    <th>Verification</th>
+                    <th>Student Daily Task Summary</th>
+                    <th>Company Feedback</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in attendance_records %}
+                <tr>
+                    <td>
+                        <strong style="color: #1e293b;">{{ r.attendance_date|date:"D, M d, Y" }}</strong>
+                    </td>
+                    <td>
+                        {% if r.check_in_time %}
+                        <div style="font-size: 13px; color: #334155;">
+                            <i class="fa-solid fa-arrow-right-to-bracket text-success me-1"></i> {{ r.check_in_time|time:"H:i" }}
+                            {% if r.check_out_time %}
+                            - <i class="fa-solid fa-arrow-right-from-bracket text-danger me-1"></i> {{ r.check_out_time|time:"H:i" }}
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <span style="color: #94a3b8; font-size: 12px;">Not logged</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <strong style="color: #2563eb;">{{ r.hours_worked|default:"0.00" }} hrs</strong>
+                    </td>
+                    <td>
+                        {% if r.attendance_status == 1 %}
+                        <span class="badge" style="background: #dcfce7; color: #166534;"><i class="fa-solid fa-circle-check me-1"></i>Present</span>
+                        {% elif r.attendance_status == 2 %}
+                        <span class="badge" style="background: #fef9c3; color: #854d0e;"><i class="fa-solid fa-clock-rotate-left me-1"></i>Half Day</span>
+                        {% elif r.attendance_status == 3 %}
+                        <span class="badge" style="background: #e0e7ff; color: #3730a3;"><i class="fa-solid fa-envelope-open-text me-1"></i>Leave</span>
+                        {% else %}
+                        <span class="badge" style="background: #fee2e2; color: #991b1b;"><i class="fa-solid fa-circle-xmark me-1"></i>Absent</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if r.verification_status == 1 %}
+                        <span class="badge" style="background: #ecfdf5; color: #047857;"><i class="fa-solid fa-check-double me-1"></i>Verified</span>
+                        {% elif r.verification_status == 2 %}
+                        <span class="badge" style="background: #fee2e2; color: #b91c1c;"><i class="fa-solid fa-triangle-exclamation me-1"></i>Flagged</span>
+                        {% else %}
+                        <span class="badge" style="background: #f1f5f9; color: #475569;">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td style="max-width: 250px;">
+                        {% if r.daily_tasks_summary %}
+                        <div style="font-size: 12px; color: #334155; line-height: 1.4; word-break: break-word;">
+                            {{ r.daily_tasks_summary }}
+                        </div>
+                        {% else %}
+                        <span style="color: #94a3b8; font-size: 12px; font-style: italic;">No summary logged</span>
+                        {% endif %}
+                    </td>
+                    <td style="max-width: 200px;">
+                        {% if r.company_remarks %}
+                        <div style="font-size: 12px; color: #1e40af; background: #eff6ff; padding: 4px 8px; border-radius: 4px; border-left: 2px solid #3b82f6;">
+                            {{ r.company_remarks }}
+                        </div>
+                        {% else %}
+                        <span style="color: #94a3b8; font-size: 12px;">--</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-5">
+        <i class="fa-solid fa-calendar-xmark fa-3x mb-3" style="color: #94a3b8;"></i>
+        <h5 style="color: #64748b;">No Attendance Records Logged Yet</h5>
+        <p style="color: #94a3b8; font-size: 13px;">The student or company supervisor has not logged daily attendance entries for this internship yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

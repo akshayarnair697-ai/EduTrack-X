@@ -1,0 +1,51 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Review Training Submissions | Company Console{% endblock %}
+{% block active_lms %}active{% endblock %}
+{% block header_title %}Review Module Submissions{% endblock %}
+{% block header_subtitle %}Module: {{ module.module_title }}{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px;">
+    <h3 style="color: #0f172a; font-size: 20px; margin-bottom: 20px;">Intern Submissions for {{ module.module_title }}</h3>
+
+    {% if submissions %}
+    <div style="display: grid; gap: 20px;">
+        {% for sub in submissions %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                <div>
+                    <h4 style="font-size: 18px; color: #0f172a; font-weight: 700;">{{ sub.student.student_name }}</h4>
+                    <div style="font-size: 13px; color: var(--text-muted);">Submitted Date: {{ sub.submitted_date }} | Status: <strong>{{ sub.status }}</strong></div>
+                </div>
+                <div>
+                    {% if sub.status == 0 %}
+                    <span style="background: rgba(234, 179, 8, 0.2); color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Pending Review</span>
+                    {% elif sub.status == 1 %}
+                    <span style="background: rgba(16, 185, 129, 0.2); color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Approved</span>
+                    {% else %}
+                    <span style="background: rgba(239, 68, 68, 0.2); color: #991b1b; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Rejected</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; margin-bottom: 15px; font-size: 14px; color: #334155;">
+                <strong>Answers / Summary:</strong>
+                <p style="margin-top: 5px; white-space: pre-wrap;">{{ sub.answer|default:"No textual answer submitted." }}</p>
+                {% if sub.file_proof %}
+                <div style="margin-top: 4px;"><strong>Submission Proof File:</strong> <a href="{{ sub.file_proof.url }}" target="_blank" style="color: var(--primary);"><i class="fa-solid fa-paperclip"></i> Download Submission File</a></div>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <a href="{% url 'Company:GradeSubmission' sub.id 1 %}" class="btn btn-primary"><i class="fa-solid fa-check"></i> Approve</a>
+                <a href="{% url 'Company:GradeSubmission' sub.id 2 %}" class="btn btn-secondary" style="background: rgba(239,68,68,0.2); color: #ef4444;"><i class="fa-solid fa-xmark"></i> Reject</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align: center; color: var(--text-muted); padding: 40px;">No student submissions received for this training module yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

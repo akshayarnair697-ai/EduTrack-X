@@ -1,0 +1,30 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Upload Study Material | Company Console{% endblock %}
+{% block active_materials %}active{% endblock %}
+{% block header_title %}Upload Training & Study Material{% endblock %}
+{% block header_subtitle %}Publish learning resources, guidelines, and documentation for students{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 650px; margin: 0 auto; padding: 35px; background: #ffffff;">
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="txt_title" style="color: #0f172a; font-weight: 600;">Material Title *</label>
+            <input type="text" name="txt_title" id="txt_title" class="form-control" required placeholder="e.g. Python Django Best Practices Handbook">
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_description" style="color: #0f172a; font-weight: 600;">Material Description *</label>
+            <textarea name="txt_description" id="txt_description" rows="4" class="form-control" required placeholder="Brief overview of topics covered, module guidelines, or prerequisites..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="file_material" style="color: #0f172a; font-weight: 600;">Attach Document / Resource File * (PDF, DOCX, ZIP)</label>
+            <input type="file" name="file_material" id="file_material" class="form-control" required accept=".pdf,.doc,.docx,.zip,.ppt,.pptx">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Publish Study Material</button>
+    </form>
+</div>
+{% endblock %}

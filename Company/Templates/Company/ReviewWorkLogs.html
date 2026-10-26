@@ -1,0 +1,51 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Review Work Logs | Company Console{% endblock %}
+{% block active_manage %}active{% endblock %}
+{% block header_title %}Audit Student Work Logs{% endblock %}
+{% block header_subtitle %}Intern: {{ internship.student.student_name }} ({{ internship.opportunity.opportunity_title }}){% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: #60a5fa; font-size: 20px;">Structured Daily Work Logs</h3>
+        <a href="{% url 'Company:ManageInterns' %}" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Interns</a>
+    </div>
+
+    {% if work_logs %}
+    <div style="display: grid; gap: 20px;">
+        {% for log in work_logs %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                <div>
+                    <h4 style="font-size: 16px; color: #0f172a; font-weight: 700;">Date: {{ log.work_date }}</h4>
+                    <div style="font-size: 13px; color: var(--primary);">Logged Hours: <strong>{{ log.hours_spent }} hrs</strong></div>
+                </div>
+                <div>
+                    {% if log.status == 0 %}
+                    <span style="background: rgba(234, 179, 8, 0.2); color: #92400e; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Pending Approval</span>
+                    {% elif log.status == 1 %}
+                    <span style="background: rgba(16, 185, 129, 0.2); color: #065f46; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Approved</span>
+                    {% else %}
+                    <span style="background: rgba(239, 68, 68, 0.2); color: #991b1b; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">Rejected</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 13px; color: #334155;">
+                <div><strong>Work Title:</strong> {{ log.work_title }}</div>
+                <div style="margin-top: 5px;"><strong>Detailed Description:</strong> {{ log.work_description }}</div>
+            </div>
+
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <a href="{% url 'Company:GradeWorkLog' log.id 1 %}" class="btn btn-primary"><i class="fa-solid fa-check"></i> Approve Log</a>
+                <a href="{% url 'Company:GradeWorkLog' log.id 2 %}" class="btn btn-secondary" style="background: rgba(239,68,68,0.2); color: #ef4444;"><i class="fa-solid fa-xmark"></i> Reject Log</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align: center; color: var(--text-muted); padding: 40px;">No work logs submitted by student yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}Academic Progress Dashboard | EduTrack-X{% endblock %}
+{% block active_progress %}active{% endblock %}
+{% block header_title %}Academic Progress Overview{% endblock %}
+{% block header_subtitle %}Comprehensive breakdown of your FYUGP completion percentage, completed activities, and missing requirements{% endblock %}
+
+{% block content %}
+<!-- Overall Completion Percentage & Status Card -->
+<div class="glass-card mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-3 text-center mb-3 mb-md-0">
+            <div class="circular-progress mx-auto" style="--percent: {{ summary.completion_percentage }};">
+                <span class="circular-progress-val">{{ summary.completion_percentage }}%</span>
+            </div>
+            <div class="mt-2" style="font-size:14px; font-weight:600; color:var(--text-muted);">Overall Programme Progress</div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h3>Programme Completion Status</h3>
+                <span class="badge {{ summary.eligibility_class }} p-2" style="font-size: 14px;">{{ summary.eligibility_status }}</span>
+            </div>
+
+            <p style="font-size:14px; color:var(--text-muted);" class="mb-3">
+                Target Requirement: <strong>{{ summary.target_required }} Credits</strong> | Earned: <strong class="text-success">{{ summary.total_earned }} Credits</strong> | Remaining: <strong class="text-danger">{{ summary.total_remaining }} Credits</strong>
+            </p>
+
+            {% if summary.missing_requirements %}
+            <div class="p-3 rounded" style="background: rgba(220, 38, 38, 0.05); border: 1px solid rgba(220, 38, 38, 0.2);">
+                <h6 style="color: var(--danger);" class="mb-2"><i class="fa-solid fa-list-check me-1"></i> Pending Requirements To Complete:</h6>
+                <ul class="mb-0 ps-3" style="font-size: 13px; color: var(--text-main);">
+                    {% for m in summary.missing_requirements %}
+                    <li>{{ m }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <div class="alert alert-success mb-0">
+                <i class="fa-solid fa-trophy me-1"></i> Congratulations! All FYUGP programme credit and internship requirements have been satisfied.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Activity & Certificate Summary -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="glass-card h-100">
+            <h4 class="mb-3"><i class="fa-solid fa-award text-primary me-2"></i> Completed Academic Activities</h4>
+            {% if activities %}
+            <div class="list-group">
+                {% for a in activities %}
+                <div class="list-group-item d-flex justify-content-between align-items-center p-3 mb-2 rounded" style="border:1px solid #e2e8f0;">
+                    <div>
+                        <strong>{{ a.activity.activity_title }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ a.activity.category.category_name }}</div>
+                    </div>
+                    <span class="badge badge-success">+{{ a.activity.credit_value }} Credits</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">No academic activities completed yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="glass-card h-100">
+            <h4 class="mb-3"><i class="fa-solid fa-briefcase text-primary me-2"></i> Internship Completion Status</h4>
+            {% if internships %}
+            {% for i in internships %}
+            <div class="p-3 rounded mb-3" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <strong>{{ i.opportunity.opportunity_title }}</strong>
+                    {% if i.internship_status == 7 %}
+                    <span class="badge badge-success">Completed ({{ i.credits_awarded }} Credits)</span>
+                    {% else %}
+                    <span class="badge badge-pending">In Progress</span>
+                    {% endif %}
+                </div>
+                <div style="font-size:13px; color:var(--text-muted);">
+                    Company: {{ i.company.company_name }} | Mode: {{ i.internship_mode }}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="text-muted">No internship recorded yet.</p>
+            <a href="{% url 'Student:BrowseOpportunities' %}" class="btn btn-primary btn-sm">Browse Internships</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

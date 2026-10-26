@@ -1,0 +1,120 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}Student Dashboard | EduTrack-X{% endblock %}
+{% block active_dashboard %}active{% endblock %}
+{% block header_title %}Student Dashboard{% endblock %}
+{% block header_subtitle %}Welcome back, {{ student.student_name }} {% if student.student_regno %}(Reg No: {{ student.student_regno }}){% endif %} | Programme: {{ student.programme.programme_name }}{% endblock %}
+
+{% block content %}
+<!-- Top Metrics Grid -->
+<div class="metrics-grid mb-4">
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--primary);">
+        <span class="metric-title">Approved Credits</span>
+        <span class="metric-value" style="color: var(--primary);">{{ summary.total_earned }} / {{ summary.target_required }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);">{{ summary.completion_percentage }}% Progress</div>
+    </div>
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--secondary);">
+        <span class="metric-title">Activities Registered</span>
+        <span class="metric-value" style="color: var(--secondary);">{{ registered_activities }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Student:MyActivities' %}">View Activities &rarr;</a></div>
+    </div>
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--success);">
+        <span class="metric-title">Internship Status</span>
+        <span class="metric-value" style="color: var(--success);">
+            {% if summary.completed_internship %}Completed{% elif accepted_count > 0 %}Active{% else %}None{% endif %}
+        </span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Student:MyApplications' %}">View Applications &rarr;</a></div>
+    </div>
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--warning);">
+        <span class="metric-title">Pending Tasks</span>
+        <span class="metric-value" style="color: var(--warning);">{{ active_tasks }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Student:MyTasks' %}">My Tasks &rarr;</a></div>
+    </div>
+</div>
+
+<!-- Quick Action Banner -->
+<div class="glass-card mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8 mb-3 mb-md-0">
+            <h3 class="mb-2"><i class="fa-solid fa-graduation-cap text-primary me-2"></i> Programme Completion Eligibility: <span class="badge {{ summary.eligibility_class }}">{{ summary.eligibility_status }}</span></h3>
+            <p class="text-muted mb-0" style="font-size: 14px;">
+                You have earned <strong>{{ summary.total_earned }}</strong> out of <strong>{{ summary.target_required }}</strong> required FYUGP programme credits.
+                {% if summary.missing_requirements %}
+                <span class="text-danger">Pending: {{ summary.missing_requirements|join:", " }}</span>
+                {% endif %}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'Student:CreditTracker' %}" class="btn btn-primary me-2">
+                <i class="fa-solid fa-chart-line"></i> Credit Tracker
+            </a>
+            <a href="{% url 'Student:ProgrammeCompletionCheck' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-circle-check"></i> Check Eligibility
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Category Credit Progress Cards -->
+<div class="glass-card mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Category-Wise Credit Snapshot</h3>
+        <a href="{% url 'Student:AcademicProgress' %}" class="btn btn-secondary btn-sm">Full Progress Report</a>
+    </div>
+
+    <div class="row">
+        {% for cat in summary.category_summary %}
+        <div class="col-md-4 mb-3">
+            <div class="p-3 rounded" style="background:#ffffff; border:1px solid #e2e8f0;">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong>{{ cat.category_name }}</strong>
+                    <span class="badge {% if cat.earned >= cat.required and cat.required > 0 %}badge-success{% else %}badge-pending{% endif %}">
+                        {{ cat.earned }}/{{ cat.required }} Credits
+                    </span>
+                </div>
+                <div class="progress-container mt-2">
+                    <div class="progress-bar-fill" style="width: {{ cat.percentage }}%;"></div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Recent Approved Credit Ledger -->
+<div class="glass-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Recent Approved Credit Ledger</h3>
+        <a href="{% url 'Student:UploadCertificate' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-upload"></i> Submit Proof for Credit</a>
+    </div>
+
+    {% if summary.approved_credits_list %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Credit Source / Label</th>
+                    <th>Source Type</th>
+                    <th>Semester</th>
+                    <th>Credits Awarded</th>
+                    <th>Date Approved</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for credit in summary.approved_credits_list|slice:":5" %}
+                <tr>
+                    <td><strong>{{ credit.credit_type }}</strong></td>
+                    <td><span class="badge badge-success">{{ credit.source_type }}</span></td>
+                    <td>Sem {{ credit.semester|default:1 }}</td>
+                    <td><strong class="text-success">+{{ credit.credit_value }} Credits</strong></td>
+                    <td>{{ credit.credit_date|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No approved credits logged yet. Enroll in activities or upload certificates to earn credits.</p>
+    {% endif %}
+</div>
+{% endblock %}

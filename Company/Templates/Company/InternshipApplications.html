@@ -1,0 +1,57 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Applications | Company Console{% endblock %}
+{% block active_apps %}active{% endblock %}
+{% block header_title %}Student Applications{% endblock %}
+{% block header_subtitle %}Review candidate applications and update status{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px; background: #ffffff;">
+    {% if applications %}
+    <div style="overflow-x: auto;">
+        <table class="table" style="width: 100%; color: #0f172a; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Candidate</th>
+                    <th style="padding: 12px; color: #475569;">Vacancy Title</th>
+                    <th style="padding: 12px; color: #475569;">Applied Date</th>
+                    <th style="padding: 12px; color: #475569;">Current Status</th>
+                    <th style="padding: 12px; color: #475569;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 14px;">
+                        <div style="font-weight: 700; color: #0f172a; font-size: 15px;">{{ app.student.student_name }}</div>
+                        <div style="font-size: 13px; color: #64748b;">{{ app.student.student_email }} | {{ app.student.student_contact }}</div>
+                    </td>
+                    <td style="padding: 14px; font-weight: 600; color: #0284c7;">{{ app.opportunity.opportunity_title }}</td>
+                    <td style="padding: 14px; font-size: 13px; color: #64748b;">{{ app.applied_date }}</td>
+                    <td style="padding: 14px; font-size: 13px;">
+                        {% if app.internship_status == 1 %}
+                        <span style="color: #059669; font-weight: 700;"><i class="fa-solid fa-circle-check"></i> Accepted / Active</span>
+                        {% elif app.internship_status == 2 %}
+                        <span style="color: #dc2626; font-weight: 700;"><i class="fa-solid fa-circle-xmark"></i> Rejected</span>
+                        {% elif app.internship_status == 3 %}
+                        <span style="color: #7c3aed; font-weight: 700;"><i class="fa-solid fa-award"></i> Completed</span>
+                        {% else %}
+                        <span style="color: #d97706; font-weight: 700;"><i class="fa-solid fa-clock"></i> Applied</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px;">
+                        <div style="display: flex; gap: 8px;">
+                            <a href="{% url 'Company:UpdateApplicationStatus' app.id 1 %}" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;"><i class="fa-solid fa-check"></i> Accept</a>
+                            <a href="{% url 'Company:UpdateApplicationStatus' app.id 2 %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px; background: #fee2e2; color: #991b1b; border-color: #fca5a5;"><i class="fa-solid fa-xmark"></i> Reject</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #64748b; padding: 40px;">No applications received yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

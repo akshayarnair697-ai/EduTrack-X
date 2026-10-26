@@ -1,0 +1,46 @@
+{% extends 'Faculty/FacultyBase.html' %}
+{% block title %}Credit Approval Log | EduTrack-X{% endblock %}
+{% block active_credits %}active{% endblock %}
+{% block header_title %}Credit Approval Ledger{% endblock %}
+{% block header_subtitle %}Overview of all approved credits for assigned students{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h3 class="mb-4">Approved Student Credit Records</h3>
+    {% if credits_list %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Date Approved</th>
+                    <th>Student Name</th>
+                    <th>Source Type</th>
+                    <th>Credit Category / Label</th>
+                    <th>Value</th>
+                    <th>Approved By</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in credits_list %}
+                <tr>
+                    <td>{{ c.credit_date|date:"M d, Y" }}</td>
+                    <td>
+                        <strong>{{ c.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ c.student.student_regno }}</div>
+                    </td>
+                    <td><span class="badge badge-success">{{ c.source_type }}</span></td>
+                    <td><strong>{{ c.credit_type }}</strong></td>
+                    <td><strong class="text-success">+{{ c.credit_value }} Credits</strong></td>
+                    <td>{{ c.approved_by.faculty_name|default:"System Admin" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <p class="text-muted">No approved credit entries recorded yet for your assigned students.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

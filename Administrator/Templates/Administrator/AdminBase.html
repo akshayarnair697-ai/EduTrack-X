@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel | EduTrack{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <span>EduTrack</span>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="{% block active_dashboard %}{% endblock %}">
+                    <a href="{% url 'Administrator:Dashboard' %}">
+                        <i class="fa-solid fa-chart-line"></i> Dashboard
+                    </a>
+                </li>
+                <li class="{% block active_categories %}{% endblock %}">
+                    <a href="{% url 'Administrator:ActivityCategory' %}">
+                        <i class="fa-solid fa-tags"></i> Activity Categories
+                    </a>
+                </li>
+                <li class="{% block active_requirements %}{% endblock %}">
+                    <a href="{% url 'Administrator:CreditRequirement' %}">
+                        <i class="fa-solid fa-sliders"></i> Credit Requirements
+                    </a>
+                </li>
+                <li class="{% block active_activities %}{% endblock %}">
+                    <a href="{% url 'Administrator:AcademicActivity' %}">
+                        <i class="fa-solid fa-award"></i> Academic Activities
+                    </a>
+                </li>
+                <li class="{% block active_progress %}{% endblock %}">
+                    <a href="{% url 'Administrator:StudentProgressMonitoring' %}">
+                        <i class="fa-solid fa-chart-pie"></i> Student Progress
+                    </a>
+                </li>
+                <li class="{% block active_certs %}{% endblock %}">
+                    <a href="{% url 'Administrator:CertificateMonitoring' %}">
+                        <i class="fa-solid fa-certificate"></i> Certificates
+                    </a>
+                </li>
+                <li class="{% block active_internships %}{% endblock %}">
+                    <a href="{% url 'Administrator:InternshipMonitoring' %}">
+                        <i class="fa-solid fa-briefcase"></i> Internships
+                    </a>
+                </li>
+                <li class="{% block active_company %}{% endblock %}">
+                    <a href="{% url 'Administrator:VerifyCompanies' %}">
+                        <i class="fa-solid fa-building-circle-check"></i> Companies
+                    </a>
+                </li>
+                <li class="{% block active_student %}{% endblock %}">
+                    <a href="{% url 'Administrator:VerifyStudents' %}">
+                        <i class="fa-solid fa-users"></i> Students Directory
+                    </a>
+                </li>
+                <li class="{% block active_faculty %}{% endblock %}">
+                    <a href="{% url 'Administrator:VerifyFaculties' %}">
+                        <i class="fa-solid fa-chalkboard-user"></i> Faculty
+                    </a>
+                </li>
+                <li class="{% block active_dept %}{% endblock %}">
+                    <a href="{% url 'Administrator:Department' %}">
+                        <i class="fa-solid fa-building"></i> Department
+                    </a>
+                </li>
+                <li class="{% block active_prog %}{% endblock %}">
+                    <a href="{% url 'Administrator:Programme' %}">
+                        <i class="fa-solid fa-graduation-cap"></i> Programme
+                    </a>
+                </li>
+                <li class="{% block active_batches %}{% endblock %}">
+                    <a href="{% url 'Administrator:Batch' %}">
+                        <i class="fa-solid fa-list-ol"></i> Batch
+                    </a>
+                </li>
+                <li class="{% block active_notifications %}{% endblock %}">
+                    <a href="{% url 'Administrator:Notifications' %}">
+                        <i class="fa-solid fa-bell"></i> Notifications
+                    </a>
+                </li>
+                <li class="{% block active_reports %}{% endblock %}">
+                    <a href="{% url 'Administrator:Reports' %}">
+                        <i class="fa-solid fa-print"></i> Reports
+                    </a>
+                </li>
+                <li class="{% block active_logout %}{% endblock %}">
+                    <a href="{% url 'Guest:Logout' %}" style="color: var(--danger);">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <a href="{% url 'Guest:Logout' %}" class="btn btn-secondary" style="width: 100%;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </div>
+        
+        <!-- Page Contents -->
+        <div class="content-area animate-fade-in">
+            <div class="dashboard-header">
+                <div>
+                    <h1>{% block header_title %}Admin Panel{% endblock %}</h1>
+                    <p style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">{% block header_subtitle %}Manage system settings and user approvals{% endblock %}</p>
+                </div>
+                <div class="user-profile-badge">
+                    <div class="user-name-role">
+                        <span class="name">{{ request.session.name }}</span>
+                        <span class="role">Admin</span>
+                    </div>
+                </div>
+            </div>
+            
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>

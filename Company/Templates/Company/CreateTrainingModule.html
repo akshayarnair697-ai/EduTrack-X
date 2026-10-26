@@ -1,0 +1,67 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Create Training Module | Company Console{% endblock %}
+{% block active_lms %}active{% endblock %}
+{% block header_title %}New LMS Training Module{% endblock %}
+{% block header_subtitle %}Set up structured onboarding modules, reading materials, videos, and practical assignments{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 800px; margin: 0 auto; padding: 35px;">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="sel_opportunity">Associated Internship Opportunity</label>
+            <select name="sel_opportunity" id="sel_opportunity" class="form-control">
+                <option value="">-- Apply to All Company Internships --</option>
+                {% for opp in opportunities %}
+                <option value="{{ opp.id }}">{{ opp.title }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="txt_title">Module Title *</label>
+                <input class="form-control" type="text" name="txt_title" id="txt_title" required placeholder="e.g. Module 1: Environment Setup & Fundamentals">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txt_deadline">Submission Deadline *</label>
+                <input class="form-control" type="date" name="txt_deadline" id="txt_deadline" required>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_description">Module Description *</label>
+            <textarea name="txt_description" id="txt_description" rows="3" class="form-control" required placeholder="Overview of module objectives and learning outcomes..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="txt_video_url">Video Tutorial URL</label>
+                <input class="form-control" type="url" name="txt_video_url" id="txt_video_url" placeholder="https://youtube.com/watch?v=tutorial">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txt_external_link">External Documentation Link</label>
+                <input class="form-control" type="url" name="txt_external_link" id="txt_external_link" placeholder="https://docs.framework.org">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_reading_materials">Reading Materials & Instructions</label>
+            <textarea name="txt_reading_materials" id="txt_reading_materials" rows="3" class="form-control" placeholder="Key concepts, guidelines, and reading links..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_assignment">Assignment Instructions</label>
+            <textarea name="txt_assignment" id="txt_assignment" rows="2" class="form-control" placeholder="What questions or report must the student submit?"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_practical_task">Practical Task / Project Deliverable</label>
+            <textarea name="txt_practical_task" id="txt_practical_task" rows="2" class="form-control" placeholder="Describe coding task, repository link requirement, or hosted demo URL needed"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Publish LMS Training Module</button>
+    </form>
+</div>
+{% endblock %}

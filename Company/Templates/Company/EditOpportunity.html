@@ -1,0 +1,49 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Edit Opportunity | Company Console{% endblock %}
+{% block active_post %}active{% endblock %}
+{% block header_title %}Edit Internship Opportunity{% endblock %}
+{% block header_subtitle %}Modify active internship vacancy details{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 700px; margin: 0 auto; padding: 35px;">
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="txt_title">Internship Title *</label>
+            <input type="text" name="txt_title" id="txt_title" class="form-control" required value="{{ opportunity.opportunity_title }}" placeholder="e.g. Python Django Intern">
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_description">Description *</label>
+            <textarea name="txt_description" id="txt_description" rows="4" class="form-control" required placeholder="Provide brief internship description...">{{ opportunity.opportunity_description }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_skills">Required Skills *</label>
+            <input type="text" name="txt_skills" id="txt_skills" class="form-control" required value="{{ opportunity.skills_required }}" placeholder="e.g. Python, HTML, CSS, MySQL">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="txt_duration">Duration *</label>
+                <input type="text" name="txt_duration" id="txt_duration" class="form-control" required value="{{ opportunity.duration }}" placeholder="e.g. 3 Months">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txt_stipend">Stipend *</label>
+                <input type="text" name="txt_stipend" id="txt_stipend" class="form-control" required value="{{ opportunity.stipend }}" placeholder="e.g. ₹5,000 / month or Unpaid">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_last_date">Application Last Date *</label>
+            <input type="date" name="txt_last_date" id="txt_last_date" class="form-control" value="{{ opportunity.last_date|date:'Y-m-d' }}" required>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 25px;">
+            <button type="submit" class="btn btn-primary" style="flex: 1; padding: 14px; font-weight: 600;">Save Changes</button>
+            <a href="{% url 'Company:ViewOpportunities' %}" class="btn btn-secondary" style="flex: 1; text-align: center; padding: 14px;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

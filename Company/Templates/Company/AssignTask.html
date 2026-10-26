@@ -1,0 +1,55 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Assign Task to Student Intern | Company Console{% endblock %}
+{% block active_tasks %}active{% endblock %}
+{% block header_title %}Assign Work / Task to Student Intern{% endblock %}
+{% block header_subtitle %}Set tasks, assign deadlines, and attach specification files for your accepted student interns{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 650px; margin: 0 auto; padding: 35px; background: #ffffff;">
+    {% if accepted_internships %}
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="sel_student" style="color: #0f172a; font-weight: 600;">Select Accepted Student Intern *</label>
+            <select name="sel_student" id="sel_student" class="form-control" required style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0;">
+                <option value="">-- Choose Student Intern --</option>
+                {% for app in accepted_internships %}
+                <option value="{{ app.student.id }}">{{ app.student.student_name }} ({{ app.opportunity.opportunity_title }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_title" style="color: #0f172a; font-weight: 600;">Task / Work Title *</label>
+            <input type="text" name="txt_title" id="txt_title" class="form-control" required placeholder="e.g. Build User Authentication Module">
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_description" style="color: #0f172a; font-weight: 600;">Detailed Task Instructions & Deliverables *</label>
+            <textarea name="txt_description" id="txt_description" rows="4" class="form-control" required placeholder="Outline task requirements, expected output format, and evaluation guidelines..."></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="txt_deadline" style="color: #0f172a; font-weight: 600;">Completion Deadline *</label>
+                <input type="date" name="txt_deadline" id="txt_deadline" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="file_task" style="color: #0f172a; font-weight: 600;">Specification Attachment (Optional)</label>
+                <input type="file" name="file_task" id="file_task" class="form-control">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Assign Task to Student</button>
+    </form>
+    {% else %}
+    <div style="text-align: center; padding: 20px;">
+        <i class="fa-solid fa-users-slash" style="font-size: 36px; color: #d97706; margin-bottom: 15px;"></i>
+        <h4 style="color: #0f172a; margin-bottom: 10px;">No Accepted Student Interns</h4>
+        <p style="color: #64748b; margin-bottom: 20px;">You need to accept candidate applications before assigning tasks.</p>
+        <a href="{% url 'Company:InternshipApplications' %}" class="btn btn-primary">Review Student Applications</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

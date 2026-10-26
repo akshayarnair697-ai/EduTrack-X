@@ -1,0 +1,118 @@
+{% extends 'Faculty/FacultyBase.html' %}
+{% block title %}Internship Monitoring | EduTrack-X{% endblock %}
+{% block active_internships %}active{% endblock %}
+{% block header_title %}Student Internship Monitoring{% endblock %}
+{% block header_subtitle %}Monitor progress reports, review final submissions, and evaluate assigned student interns{% endblock %}
+
+{% block content %}
+<div class="glass-card mb-4">
+    <h3 class="mb-4">Assigned Students Internships Pipeline ({{ internships.count }})</h3>
+    {% if internships %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Company & Position</th>
+                    <th>Mode & Dates</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in internships %}
+                <tr>
+                    <td>
+                        <strong>{{ i.student.student_name }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ i.student.student_regno }}</div>
+                    </td>
+                    <td>
+                        <strong>{{ i.opportunity.opportunity_title }}</strong>
+                        <div style="font-size:12px; color:var(--text-muted);">{{ i.company.company_name }}</div>
+                    </td>
+                    <td>
+                        <span class="badge badge-secondary" style="background:#e2e8f0; color:#334155;">{{ i.internship_mode }}</span>
+                        {% if i.start_date %}
+                        <div style="font-size:11px; color:var(--text-muted);">{{ i.start_date|date:"M d" }} - {{ i.expected_end_date|date:"M d, Y"|default:"TBD" }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.internship_status == 3 %}<span class="badge badge-primary" style="background:#dbeafe; color:#1d4ed8;">Started</span>
+                        {% elif i.internship_status == 4 %}<span class="badge badge-primary" style="background:#dbeafe; color:#1d4ed8;">In Progress</span>
+                        {% elif i.internship_status == 5 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Report Pending</span>
+                        {% elif i.internship_status == 6 %}<span class="badge badge-warning" style="background:#fef3c7; color:#d97706;">Faculty Review</span>
+                        {% elif i.internship_status == 7 %}<span class="badge badge-success">Completed ({{ i.credits_awarded }} Credits)</span>
+                        {% else %}<span class="badge badge-pending">Active</span>{% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{% url 'Faculty:StudentAttendance' i.id %}" class="btn btn-secondary btn-sm" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;">
+                                <i class="fa-solid fa-clock"></i> Attendance
+                            </a>
+                            <a href="{% url 'Faculty:EvaluateInternship' i.id %}" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-clipboard-check"></i> Evaluate
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <p class="text-muted">No assigned students currently doing internships.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Periodic Progress Reports Section -->
+<div class="glass-card mb-4">
+    <h3 class="mb-4">Submitted Periodic Progress Reports</h3>
+    {% if progress_reports %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Reporting Date</th>
+                    <th>Student</th>
+                    <th>Work Completed</th>
+                    <th>Hours</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in progress_reports %}
+                <tr>
+                    <td>{{ p.reporting_date|date:"M d, Y" }}</td>
+                    <td><strong>{{ p.student.student_name }}</strong></td>
+                    <td>
+                        {{ p.work_completed|truncatewords:15 }}
+                        {% if p.supporting_document %}
+                        <a href="{{ p.supporting_document.url }}" target="_blank" style="font-size:12px;" class="d-block mt-1"><i class="fa-solid fa-paperclip"></i> View File</a>
+                        {% endif %}
+                    </td>
+                    <td>{{ p.hours_completed }} hrs</td>
+                    <td>
+                        {% if p.progress_status == 1 %}
+                        <span class="badge badge-success">Reviewed</span>
+                        {% else %}
+                        <span class="badge badge-pending">Submitted</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'Faculty:ReviewProgressReport' p.id %}" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-comment-dots"></i> Review
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No periodic progress reports submitted yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

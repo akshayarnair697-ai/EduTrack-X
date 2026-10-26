@@ -1,0 +1,106 @@
+{% extends 'Company/CompanyBase.html' %}
+{% block title %}Evaluate Intern | EduTrack-X{% endblock %}
+{% block active_interns %}active{% endblock %}
+{% block header_title %}Student Intern Performance Evaluation{% endblock %}
+{% block header_subtitle %}Intern: {{ internship.student.student_name }} | Opportunity: {{ internship.opportunity.opportunity_title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <h3 class="mb-4">Structured Performance Assessment (1 to 10 Scale)</h3>
+
+            {% if att_stats and att_stats.total_days > 0 %}
+            <div style="background: linear-gradient(135deg, #eff6ff, #f8fafc); border: 1px solid #bfdbfe; border-radius: 10px; padding: 15px; margin-bottom: 25px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+                    <strong style="color:#1e40af;"><i class="fa-solid fa-clock-rotate-left"></i> Verified Attendance Track Record</strong>
+                    <a href="{% url 'Company:InternAttendance' internship.id %}" target="_blank" style="font-size:12px; color:#2563eb; text-decoration:underline;">View Detailed Attendance Log</a>
+                </div>
+                <div class="row g-2 text-center">
+                    <div class="col-3">
+                        <div style="font-size:11px; color:#64748b;">Logged Days</div>
+                        <div style="font-size:16px; font-weight:700; color:#1e293b;">{{ att_stats.total_days }}</div>
+                    </div>
+                    <div class="col-3">
+                        <div style="font-size:11px; color:#64748b;">Present</div>
+                        <div style="font-size:16px; font-weight:700; color:#16a34a;">{{ att_stats.present_days }}</div>
+                    </div>
+                    <div class="col-3">
+                        <div style="font-size:11px; color:#64748b;">Total Hours</div>
+                        <div style="font-size:16px; font-weight:700; color:#2563eb;">{{ att_stats.total_hours }} hrs</div>
+                    </div>
+                    <div class="col-3">
+                        <div style="font-size:11px; color:#64748b;">Attendance Rate</div>
+                        <div style="font-size:16px; font-weight:700; color:{% if att_stats.attendance_rate >= 80 %}#16a34a{% elif att_stats.attendance_rate >= 60 %}#d97706{% else %}#dc2626{% endif %};">{{ att_stats.attendance_rate }}%</div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Technical Skills (1-10) *</label>
+                        <input type="number" name="txt_tech" class="form-control" value="{{ eval_obj.technical_skills|default:8 }}" min="1" max="10" required>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Communication Skills (1-10) *</label>
+                        <input type="number" name="txt_comm" class="form-control" value="{{ eval_obj.communication|default:8 }}" min="1" max="10" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Punctuality & Attendance (1-10) *</label>
+                        <input type="number" name="txt_att" class="form-control" value="{{ eval_obj.attendance|default:9 }}" min="1" max="10" required>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Work Quality & Accuracy (1-10) *</label>
+                        <input type="number" name="txt_qual" class="form-control" value="{{ eval_obj.work_quality|default:8 }}" min="1" max="10" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Teamwork & Collaboration (1-10) *</label>
+                        <input type="number" name="txt_team" class="form-control" value="{{ eval_obj.teamwork|default:9 }}" min="1" max="10" required>
+                    </div>
+
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Discipline & Professional Ethics (1-10) *</label>
+                        <input type="number" name="txt_disc" class="form-control" value="{{ eval_obj.discipline|default:9 }}" min="1" max="10" required>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Overall Performance Grade (1-10) *</label>
+                    <input type="number" name="txt_overall" class="form-control" value="{{ eval_obj.overall_performance|default:9 }}" min="1" max="10" required>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Company Mentor Remarks & Feedback</label>
+                    <textarea name="txt_remarks" class="form-control" rows="3" placeholder="Enter key observations, strengths, or recommendations">{{ eval_obj.remarks }}</textarea>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" name="chk_confirm" id="chk_confirm" {% if eval_obj.confirmed_completion %}checked{% endif %}>
+                    <label class="form-check-label" for="chk_confirm">
+                        <strong>Confirm Official Internship Completion</strong> (Student has successfully satisfied all company requirements)
+                    </label>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-save"></i> Submit Evaluation & Confirm Completion
+                    </button>
+                    <a href="{% url 'Company:ManageInterns' %}" class="btn btn-secondary w-50">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

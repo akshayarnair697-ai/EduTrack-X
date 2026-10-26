@@ -1,0 +1,112 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}Credit Requirement Configurator | EduTrack-X{% endblock %}
+{% block active_requirements %}active{% endblock %}
+{% block header_title %}Credit Requirement Configurator{% endblock %}
+{% block header_subtitle %}Set required FYUGP credits per Programme, Category, Year, and Semester{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Form Card -->
+    <div class="col-lg-4 mb-4">
+        <div class="glass-card">
+            <h3 class="mb-4">Add Requirement Rule</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label class="form-label">Programme *</label>
+                    <select name="sel_programme" class="form-control" required>
+                        <option value="">-- Select Programme --</option>
+                        {% for p in programmes %}
+                        <option value="{{ p.id }}">{{ p.programme_name }} ({{ p.department.department_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Activity Category *</label>
+                    <select name="sel_category" class="form-control" required>
+                        <option value="">-- Select Category --</option>
+                        {% for c in categories %}
+                        <option value="{{ c.id }}">{{ c.category_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Academic Year (Optional)</label>
+                    <select name="sel_year" class="form-control">
+                        <option value="">All Academic Years</option>
+                        {% for y in years %}
+                        <option value="{{ y.id }}">{{ y.academicyear_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Semester (Optional)</label>
+                    <select name="sel_semester" class="form-control">
+                        <option value="">All Semesters</option>
+                        {% for sem in "12345678" %}
+                        <option value="{{ sem }}">Semester {{ sem }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Required Credit Value *</label>
+                    <input type="number" name="txt_req_credit" class="form-control" placeholder="e.g. 4" required min="1" max="50">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fa-solid fa-plus-circle"></i> Save Credit Requirement Rule
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Requirements Table -->
+    <div class="col-lg-8">
+        <div class="glass-card">
+            <h3 class="mb-4">Configured Programme Requirements</h3>
+            {% if requirements %}
+            <div class="custom-table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Programme</th>
+                            <th>Category</th>
+                            <th>Target Year/Sem</th>
+                            <th>Required Credit</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in requirements %}
+                        <tr>
+                            <td><strong>{{ r.programme.programme_name }}</strong></td>
+                            <td><span class="badge badge-success">{{ r.activity_category.category_name }}</span></td>
+                            <td>
+                                {% if r.academic_year %}{{ r.academic_year.academicyear_name }}{% else %}All Years{% endif %}
+                                {% if r.semester %} / Sem {{ r.semester }}{% endif %}
+                            </td>
+                            <td><strong>{{ r.required_credit }} Credits</strong></td>
+                            <td>
+                                <a href="{% url 'Administrator:del_creditrequirement' r.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Remove this requirement rule?');">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center p-4">
+                <i class="fa-solid fa-sliders fa-3x text-muted mb-3"></i>
+                <p>No requirement rules configured yet. Define rules to enforce FYUGP programme completion targets.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

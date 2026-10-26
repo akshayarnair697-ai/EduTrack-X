@@ -1,0 +1,93 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}Browse Academic Activities | EduTrack-X{% endblock %}
+{% block active_activities %}active{% endblock %}
+{% block header_title %}Academic Activities{% endblock %}
+{% block header_subtitle %}Browse, search and register for SEC, VAC, MDC, Workshops and Seminars{% endblock %}
+
+{% block content %}
+<!-- Search & Filter Bar -->
+<div class="glass-card mb-4">
+    <form method="GET" action="" class="row g-3 align-items-center">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="Search by activity title..." value="{{ request.GET.q }}">
+        </div>
+        <div class="col-md-3">
+            <select name="cat" class="form-control">
+                <option value="">All Activity Categories</option>
+                {% for c in categories %}
+                <option value="{{ c.id }}" {% if request.GET.cat == c.id|stringformat:"i" %}selected{% endif %}>{{ c.category_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="sem" class="form-control">
+                <option value="">All Semesters</option>
+                {% for s in "12345678" %}
+                <option value="{{ s }}" {% if request.GET.sem == s %}selected{% endif %}>Semester {{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="fa-solid fa-search"></i> Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Activities Grid -->
+<div class="row">
+    {% if eligible_activities %}
+    {% for item in eligible_activities %}
+    <div class="col-lg-6 mb-4">
+        <div class="glass-card h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge badge-success" style="font-size: 13px;">{{ item.activity.category.category_name }}</span>
+                    <span class="badge badge-primary" style="background:#e0f2fe; color:#0369a1;">{{ item.activity.credit_value }} Credits</span>
+                </div>
+                <h4 style="font-size: 18px; color: var(--text-main); font-weight: 700;">{{ item.activity.activity_title }}</h4>
+                <p class="text-muted mb-2" style="font-size: 13px;">
+                    <i class="fa-solid fa-building me-1"></i> {{ item.activity.conducting_org }} | <i class="fa-solid fa-calendar me-1"></i> Sem {{ item.activity.semester }}
+                </p>
+                <p style="font-size: 14px; color: #475569;" class="mb-3">
+                    {{ item.activity.description|truncatewords:20 }}
+                </p>
+                
+                <div class="p-3 mb-3 rounded" style="background: #f8fafc; font-size: 13px; border: 1px solid #e2e8f0;">
+                    <div><i class="fa-solid fa-clock text-muted me-1"></i> <strong>Duration:</strong> {{ item.activity.duration }}</div>
+                    <div><i class="fa-solid fa-calendar-day text-muted me-1"></i> <strong>Dates:</strong> {{ item.activity.start_date|date:"M d, Y" }} to {{ item.activity.end_date|date:"M d, Y" }}</div>
+                    <div><i class="fa-solid fa-hourglass-half text-danger me-1"></i> <strong>Registration Deadline:</strong> {{ item.activity.registration_deadline|date:"M d, Y" }}</div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                {% if item.registration %}
+                <span class="badge badge-success p-2">
+                    <i class="fa-solid fa-check-circle"></i> Registered
+                </span>
+                <a href="{% url 'Student:MyActivities' %}" class="btn btn-secondary btn-sm">View Status</a>
+                {% elif not item.is_eligible %}
+                <span class="badge badge-danger p-2" title="Not targeted for your Programme or Batch">Not Eligible</span>
+                <a href="{% url 'Student:ActivityDetails' item.activity.id %}" class="btn btn-secondary btn-sm">Details</a>
+                {% else %}
+                <a href="{% url 'Student:ActivityDetails' item.activity.id %}" class="btn btn-secondary btn-sm">View Details</a>
+                <a href="{% url 'Student:RegisterActivity' item.activity.id %}" class="btn btn-primary btn-sm" onclick="return confirm('Confirm registration for this activity?');">
+                    <i class="fa-solid fa-user-plus"></i> Register Now
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div class="glass-card text-center p-5">
+            <i class="fa-solid fa-calendar-xmark fa-3x text-muted mb-3"></i>
+            <h4>No Academic Activities Available</h4>
+            <p class="text-muted">There are currently no active academic activities matching your criteria.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

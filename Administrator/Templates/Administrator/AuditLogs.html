@@ -1,0 +1,44 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}System Audit Logs | EduTrack-X{% endblock %}
+{% block active_logs %}active{% endblock %}
+{% block header_title %}System Audit Logs{% endblock %}
+{% block header_subtitle %}Detailed event history and action trail across EduTrack-X{% endblock %}
+
+{% block content %}
+<div class="glass-card">
+    <h3 class="mb-4">Action History Trail (Last 200 Actions)</h3>
+    {% if logs %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                    <th>Module</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td><small class="text-muted">{{ log.timestamp|date:"Y-m-d H:i:s" }}</small></td>
+                    <td><strong>{{ log.user_name }}</strong></td>
+                    <td><span class="badge badge-secondary" style="background:#e2e8f0; color:#334155;">{{ log.user_role }}</span></td>
+                    <td><span class="badge badge-success">{{ log.action }}</span></td>
+                    <td>{{ log.related_module }}</td>
+                    <td>{{ log.description|default:"-" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center p-4">
+        <i class="fa-solid fa-file-circle-exclamation fa-3x text-muted mb-3"></i>
+        <p>No audit log entries recorded yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

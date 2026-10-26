@@ -1,0 +1,92 @@
+{% extends 'Faculty/FacultyBase.html' %}
+
+{% block title %}Faculty Dashboard | EduTrack-X{% endblock %}
+{% block active_dashboard %}active{% endblock %}
+{% block header_title %}Faculty Guide Dashboard{% endblock %}
+{% block header_subtitle %}Welcome back, {{ faculty.faculty_name }} | {{ faculty.department.department_name }} Department{% endblock %}
+
+{% block content %}
+<!-- Top Verification Metrics Grid -->
+<div class="metrics-grid mb-4">
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--primary);">
+        <span class="metric-title">Assigned Students</span>
+        <span class="metric-value" style="color: var(--primary);">{{ assigned_count }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Faculty:AssignedStudents' %}">View Students &rarr;</a></div>
+    </div>
+
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--warning);">
+        <span class="metric-title">Pending Certificates</span>
+        <span class="metric-value" style="color: var(--warning);">{{ pending_certificates }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Faculty:CertificateVerifications' %}">Verify Certs &rarr;</a></div>
+    </div>
+
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--secondary);">
+        <span class="metric-title">Activity Approvals</span>
+        <span class="metric-value" style="color: var(--secondary);">{{ pending_activities }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Faculty:ActivityApprovals' %}">Approve Registrations &rarr;</a></div>
+    </div>
+
+    <div class="glass-card metric-card" style="border-left: 4px solid var(--success);">
+        <span class="metric-title">Active Interns</span>
+        <span class="metric-value" style="color: var(--success);">{{ active_interns }}</span>
+        <div style="font-size: 12px; color: var(--text-muted);"><a href="{% url 'Faculty:InternshipMonitoring' %}">Internship Pipeline &rarr;</a></div>
+    </div>
+</div>
+
+<!-- Pending Action Badges Banner -->
+{% if pending_certificates > 0 or pending_activities > 0 or pending_reports > 0 %}
+<div class="glass-card mb-4" style="background: rgba(217, 119, 6, 0.05); border: 1px solid rgba(217, 119, 6, 0.2);">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h4 style="color: var(--warning);" class="mb-1"><i class="fa-solid fa-clock-rotate-left me-2"></i> Pending Actions Awaiting Faculty Verification</h4>
+            <p class="mb-0 text-muted" style="font-size: 14px;">
+                You have <strong>{{ pending_certificates }}</strong> certificates, <strong>{{ pending_activities }}</strong> activity registrations, and <strong>{{ pending_reports }}</strong> internship final reports pending.
+            </p>
+        </div>
+        <div>
+            <a href="{% url 'Faculty:CertificateVerifications' %}" class="btn btn-warning me-2">Verify Certificates</a>
+            <a href="{% url 'Faculty:ActivityApprovals' %}" class="btn btn-secondary">Review Activities</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Assigned Mentees Overview Table -->
+<div class="glass-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Assigned Students Progress Overview</h3>
+        <a href="{% url 'Faculty:AssignedStudents' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-users"></i> View Full Roster</a>
+    </div>
+
+    {% if assigned_students %}
+    <div class="custom-table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Reg No</th>
+                    <th>Programme & Batch</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in assigned_students %}
+                <tr>
+                    <td><strong>{{ student.student_name }}</strong></td>
+                    <td>{{ student.student_regno|default:"N/A" }}</td>
+                    <td>{{ student.programme.programme_name }} ({{ student.batch.batch_name }})</td>
+                    <td>
+                        <a href="{% url 'Faculty:MonitorStudent' student.id %}" class="btn btn-primary btn-sm">
+                            <i class="fa-solid fa-eye"></i> Monitor Academic Profile
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-muted">No student mentees assigned yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

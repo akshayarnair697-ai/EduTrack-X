@@ -1,0 +1,46 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}Browse Internships | Student Portal{% endblock %}
+{% block active_opps %}active{% endblock %}
+{% block header_title %}Available Internships{% endblock %}
+{% block header_subtitle %}Search and apply for corporate internship opportunities{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 25px; margin-bottom: 30px; background: #ffffff;">
+    <form action="" method="get" style="display: flex; gap: 15px;">
+        <input type="text" name="q" class="form-control" placeholder="Search by title or keyword..." value="{{ request.GET.q|default:'' }}">
+        <button type="submit" class="btn btn-primary" style="padding: 10px 25px;"><i class="fa-solid fa-search"></i> Search</button>
+    </form>
+</div>
+
+<div class="glass-card" style="padding: 30px; background: #ffffff;">
+    {% if opportunities %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        {% for opp in opportunities %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h4 style="font-size: 18px; color: #0f172a; font-weight: 700; margin-bottom: 6px;">{{ opp.opportunity_title }}</h4>
+                <div style="font-size: 14px; color: #0284c7; font-weight: 600; margin-bottom: 12px;">Company: {{ opp.company.company_name }}</div>
+
+                <p style="font-size: 13px; color: #475569; margin-bottom: 15px; line-height: 1.5;">{{ opp.opportunity_description|truncatewords:20 }}</p>
+
+                <div style="font-size: 13px; color: #334155; margin-bottom: 15px; line-height: 1.6;">
+                    <div><strong>Skills:</strong> {{ opp.skills_required }}</div>
+                    <div><strong>Duration:</strong> {{ opp.duration }}</div>
+                    <div><strong>Stipend:</strong> {{ opp.stipend }}</div>
+                    <div><strong>Last Date:</strong> {{ opp.last_date }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                <a href="{% url 'Student:ApplyOpportunity' opp.id %}" class="btn btn-primary" style="flex: 1; text-align: center;">Apply Now</a>
+                <a href="{% url 'Student:ViewCompanyDetails' opp.company.id %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Company Info</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align: center; color: #64748b; padding: 40px;">No internship opportunities found.</p>
+    {% endif %}
+</div>
+{% endblock %}

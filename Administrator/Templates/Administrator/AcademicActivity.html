@@ -1,0 +1,202 @@
+{% extends 'Administrator/AdminBase.html' %}
+{% block title %}Academic Activity Management | EduTrack-X{% endblock %}
+{% block active_activities %}active{% endblock %}
+{% block header_title %}Academic Activity Management{% endblock %}
+{% block header_subtitle %}Create, publish and track academic activities, workshops, seminars, and courses{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Activity Creation Form -->
+    <div class="col-lg-5 mb-4">
+        <div class="glass-card">
+            <h3 class="mb-4">{% if act_edit %}Edit Academic Activity{% else %}Create Academic Activity{% endif %}</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label class="form-label">Activity Title *</label>
+                    <input type="text" name="txt_title" class="form-control" placeholder="e.g. Python for Data Science Workshop" value="{{ act_edit.activity_title }}" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Category *</label>
+                    <select name="sel_category" class="form-control" required>
+                        <option value="">-- Select Category --</option>
+                        {% for c in categories %}
+                        <option value="{{ c.id }}" {% if act_edit and act_edit.category.id == c.id %}selected{% endif %}>{{ c.category_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Conducting Dept / Organization *</label>
+                    <input type="text" name="txt_org" class="form-control" placeholder="e.g. Department of Computer Science" value="{{ act_edit.conducting_org }}" required>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Start Date *</label>
+                        <input type="date" name="txt_start_date" class="form-control" value="{{ act_edit.start_date|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="txt_end_date" class="form-control" value="{{ act_edit.end_date|date:'Y-m-d' }}">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Duration</label>
+                        <input type="text" name="txt_duration" class="form-control" placeholder="e.g. 3 Days / 30 Hours" value="{{ act_edit.duration }}">
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Credit Value *</label>
+                        <input type="number" name="txt_credit_value" class="form-control" placeholder="e.g. 2" value="{{ act_edit.credit_value|default:2 }}" required min="1" max="20">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Academic Year *</label>
+                        <select name="sel_year" class="form-control" required>
+                            {% for y in years %}
+                            <option value="{{ y.id }}" {% if act_edit and act_edit.academic_year.id == y.id %}selected{% endif %}>{{ y.academicyear_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Semester *</label>
+                        <input type="number" name="txt_semester" class="form-control" value="{{ act_edit.semester|default:1 }}" min="1" max="8" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Eligible Programme</label>
+                        <select name="sel_programme" class="form-control">
+                            <option value="">All Programmes</option>
+                            {% for p in programmes %}
+                            <option value="{{ p.id }}" {% if act_edit and act_edit.eligible_programme.id == p.id %}selected{% endif %}>{{ p.programme_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Eligible Batch</label>
+                        <select name="sel_batch" class="form-control">
+                            <option value="">All Batches</option>
+                            {% for b in batches %}
+                            <option value="{{ b.id }}" {% if act_edit and act_edit.eligible_batch.id == b.id %}selected{% endif %}>{{ b.batch_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Registration Deadline *</label>
+                        <input type="date" name="txt_deadline" class="form-control" value="{{ act_edit.registration_deadline|date:'Y-m-d' }}" required>
+                    </div>
+                    <div class="col-md-6 form-group mb-3">
+                        <label class="form-label">Max Participants</label>
+                        <input type="number" name="txt_max_participants" class="form-control" placeholder="Leave empty for unlimited" value="{{ act_edit.max_participants }}">
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Required Proof / Document</label>
+                    <input type="text" name="txt_proof" class="form-control" value="{{ act_edit.required_proof|default:'Completion Certificate' }}">
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Description</label>
+                    <textarea name="txt_description" class="form-control" rows="3" placeholder="Syllabus, topics covered, venue, instructions">{{ act_edit.description }}</textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fa-solid fa-save"></i> {% if act_edit %}Update Activity{% else %}Publish Activity{% endif %}
+                    </button>
+                    {% if act_edit %}
+                    <a href="{% url 'Administrator:AcademicActivity' %}" class="btn btn-secondary w-50">Cancel</a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Activity List -->
+    <div class="col-lg-7">
+        <div class="glass-card">
+            <h3 class="mb-4">Published Activities</h3>
+            {% if activities %}
+            <div class="custom-table-container">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Activity Details</th>
+                            <th>Credit / Sem</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in activities %}
+                        <tr>
+                            <td>
+                                <strong>{{ a.activity_title }}</strong>
+                                <div style="font-size: 12px; color: var(--text-muted);">
+                                    <span class="badge badge-secondary" style="background:#e2e8f0; color:#334155;">{{ a.category.category_name }}</span> | {{ a.conducting_org }}
+                                </div>
+                            </td>
+                            <td>
+                                <strong>{{ a.credit_value }} Credits</strong>
+                                <div style="font-size: 12px; color: var(--text-muted);">Sem {{ a.semester }}</div>
+                            </td>
+                            <td>{{ a.registration_deadline|date:"M d, Y" }}</td>
+                            <td>
+                                {% if a.activity_status == 1 %}
+                                <span class="badge badge-success">Open</span>
+                                {% elif a.activity_status == 0 %}
+                                <span class="badge badge-pending">Upcoming</span>
+                                {% elif a.activity_status == 2 %}
+                                <span class="badge badge-pending">Ongoing</span>
+                                {% elif a.activity_status == 3 %}
+                                <span class="badge badge-success">Completed</span>
+                                {% else %}
+                                <span class="badge badge-danger">Closed</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="{% url 'Administrator:ViewActivityRegistrations' a.id %}" class="btn btn-primary btn-sm" title="View Registrations">
+                                        <i class="fa-solid fa-users"></i>
+                                    </a>
+                                    <a href="{% url 'Administrator:edit_academicactivity' a.id %}" class="btn btn-secondary btn-sm" title="Edit">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    {% if a.activity_status == 1 %}
+                                    <a href="{% url 'Administrator:update_activity_status' a.id 4 %}" class="btn btn-danger btn-sm" title="Close Registration">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'Administrator:update_activity_status' a.id 1 %}" class="btn btn-success btn-sm" title="Open Registration">
+                                        <i class="fa-solid fa-lock-open"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center p-4">
+                <i class="fa-solid fa-award fa-3x text-muted mb-3"></i>
+                <p>No academic activities created yet. Create your first activity using the form.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

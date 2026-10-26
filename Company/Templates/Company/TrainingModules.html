@@ -1,0 +1,37 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Training LMS Modules | Company Console{% endblock %}
+{% block active_lms %}active{% endblock %}
+{% block header_title %}Corporate Training LMS Modules{% endblock %}
+{% block header_subtitle %}Create reading materials, practical tasks, video links, and review intern submissions{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="padding: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="color: #0f172a; font-size: 20px;">Training Modules ({{ modules.count }})</h3>
+        <a href="{% url 'Company:CreateTrainingModule' %}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Create Training Module</a>
+    </div>
+
+    {% if modules %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+        {% for m in modules %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h4 style="font-size: 18px; color: var(--primary); font-weight: 700; margin-bottom: 8px;">{{ m.module_title }}</h4>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">{{ m.module_description|truncatewords:20 }}</p>
+                <div style="font-size: 13px; color: #475569; margin-bottom: 6px;"><strong>Deadline:</strong> {{ m.deadline }}</div>
+                {% if m.video_url %}
+                <div style="font-size: 12px; margin-bottom: 4px;"><a href="{{ m.video_url }}" target="_blank" style="color: #38bdf8;"><i class="fa-brands fa-youtube"></i> Orientation Video</a></div>
+                {% endif %}
+            </div>
+            <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                <a href="{% url 'Company:ReviewSubmissions' m.id %}" class="btn btn-primary" style="width: 100%; text-align: center;"><i class="fa-solid fa-clipboard-check"></i> Review Student Submissions</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align: center; color: var(--text-muted); padding: 40px;">No training modules created yet. Click 'Create Training Module' to add onboarding materials and assignments.</p>
+    {% endif %}
+</div>
+{% endblock %}

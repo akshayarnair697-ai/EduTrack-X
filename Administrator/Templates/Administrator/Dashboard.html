@@ -1,0 +1,53 @@
+{% extends 'Administrator/AdminBase.html' %}
+
+{% block title %}Admin Dashboard | EduTrack Core{% endblock %}
+{% block active_dashboard %}active{% endblock %}
+{% block header_title %}Admin Dashboard{% endblock %}
+{% block header_subtitle %}Overview of companies, students, faculty, departments, and user approvals{% endblock %}
+
+{% block content %}
+<!-- Metrics Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <div class="card" style="border-left: 4px solid #0284c7; text-align: center; background: #ffffff;">
+        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Companies</div>
+        <div style="font-size: 36px; font-weight: 800; color: #0284c7; margin-top: 5px;">{{ total_companies }}</div>
+        <div style="font-size: 13px; color: #b45309; margin-top: 4px; font-weight: 600;">Pending Approvals: <strong>{{ pending_companies }}</strong></div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #059669; text-align: center; background: #ffffff;">
+        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Students</div>
+        <div style="font-size: 36px; font-weight: 800; color: #059669; margin-top: 5px;">{{ total_students }}</div>
+        <div style="font-size: 13px; color: #b45309; margin-top: 4px; font-weight: 600;">Pending Approvals: <strong>{{ pending_students }}</strong></div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #7c3aed; text-align: center; background: #ffffff;">
+        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Total Faculty</div>
+        <div style="font-size: 36px; font-weight: 800; color: #7c3aed; margin-top: 5px;">{{ total_faculty }}</div>
+        <div style="font-size: 13px; color: #475569; margin-top: 4px; font-weight: 600;">Pending Approvals: <strong>{{ pending_faculty }}</strong></div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #d97706; text-align: center; background: #ffffff;">
+        <div style="font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase;">Departments</div>
+        <div style="font-size: 36px; font-weight: 800; color: #d97706; margin-top: 5px;">{{ total_departments }}</div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card" style="padding: 25px; margin-bottom: 30px; background: #ffffff;">
+    <h3 style="color: #0f172a; font-size: 18px; margin-bottom: 15px;">Quick Administrative Actions</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <a href="{% url 'Administrator:VerifyCompanies' %}" class="btn btn-primary" style="padding: 14px; text-align: center;">
+            <i class="fa-solid fa-building-circle-check"></i> Company Approvals ({{ pending_companies }})
+        </a>
+        <a href="{% url 'Administrator:VerifyStudents' %}" class="btn btn-secondary" style="padding: 14px; text-align: center;">
+            <i class="fa-solid fa-user-check"></i> Student Approvals ({{ pending_students }})
+        </a>
+        <a href="{% url 'Administrator:VerifyFaculties' %}" class="btn btn-secondary" style="padding: 14px; text-align: center;">
+            <i class="fa-solid fa-chalkboard-user"></i> Faculty Approvals ({{ pending_faculty }})
+        </a>
+        <a href="{% url 'Administrator:VerifyStudents' %}" class="btn btn-secondary" style="padding: 14px; text-align: center; background: #4f46e5; color: #ffffff;">
+            <i class="fa-solid fa-users"></i> Students Directory & Guides
+        </a>
+    </div>
+</div>
+{% endblock %}

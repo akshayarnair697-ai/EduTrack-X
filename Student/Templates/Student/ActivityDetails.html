@@ -1,0 +1,81 @@
+{% extends 'Student/StudentBase.html' %}
+{% block title %}{{ activity.activity_title }} | EduTrack-X{% endblock %}
+{% block active_activities %}active{% endblock %}
+{% block header_title %}{{ activity.activity_title }}{% endblock %}
+{% block header_subtitle %}Category: {{ activity.category.category_name }} | Credit: {{ activity.credit_value }} Credits{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="glass-card">
+            <h3 class="mb-3">Activity Description & Details</h3>
+            <p style="font-size: 15px; line-height: 1.6; color: var(--text-main);">
+                {{ activity.description|linebreaks }}
+            </p>
+
+            <div class="row mt-4">
+                <div class="col-md-6 mb-3">
+                    <div class="p-3 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                        <h6 class="text-muted mb-1">Conducting Organization</h6>
+                        <strong>{{ activity.conducting_org }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="p-3 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                        <h6 class="text-muted mb-1">Target Academic Year & Semester</h6>
+                        <strong>{{ activity.academic_year.academicyear_name }} (Semester {{ activity.semester }})</strong>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="p-3 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                        <h6 class="text-muted mb-1">Activity Dates</h6>
+                        <strong>{{ activity.start_date|date:"M d, Y" }} - {{ activity.end_date|date:"M d, Y" }}</strong>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="p-3 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                        <h6 class="text-muted mb-1">Required Proof Document</h6>
+                        <strong>{{ activity.required_proof }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="glass-card">
+            <h3 class="mb-4">Eligibility & Registration</h3>
+            <div class="mb-3">
+                <label class="text-muted d-block" style="font-size: 13px;">Eligible Programme</label>
+                <strong>{% if activity.eligible_programme %}{{ activity.eligible_programme.programme_name }}{% else %}All Programmes{% endif %}</strong>
+            </div>
+            <div class="mb-3">
+                <label class="text-muted d-block" style="font-size: 13px;">Eligible Batch</label>
+                <strong>{% if activity.eligible_batch %}{{ activity.eligible_batch.batch_name }}{% else %}All Batches{% endif %}</strong>
+            </div>
+            <div class="mb-3">
+                <label class="text-muted d-block" style="font-size: 13px;">Registration Deadline</label>
+                <strong class="text-danger">{{ activity.registration_deadline|date:"M d, Y" }}</strong>
+            </div>
+
+            <hr>
+
+            {% if registration %}
+            <div class="alert alert-success">
+                <i class="fa-solid fa-check-circle me-1"></i> You are registered for this activity.
+            </div>
+            <a href="{% url 'Student:MyActivities' %}" class="btn btn-secondary w-100">View My Activities</a>
+            {% elif not is_eligible %}
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i> You are not eligible for this activity based on programme/batch criteria.
+            </div>
+            <a href="{% url 'Student:AcademicActivities' %}" class="btn btn-secondary w-100">Back to Activities</a>
+            {% else %}
+            <a href="{% url 'Student:RegisterActivity' activity.id %}" class="btn btn-primary w-100" onclick="return confirm('Register for this activity?');">
+                <i class="fa-solid fa-user-plus"></i> Confirm Registration
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

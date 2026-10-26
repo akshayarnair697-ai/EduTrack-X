@@ -1,0 +1,94 @@
+{% extends 'Administrator/AdminBase.html' %}
+
+{% block title %}Manage Programmes | EduTrack-X{% endblock %}
+{% block header_title %}Academic Programmes{% endblock %}
+{% block header_subtitle %}Define degree courses, required credits, and durations{% endblock %}
+{% block active_prog %}active{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
+    <!-- Form Card -->
+    <div class="glass-card">
+        <h3>{% if editdata %}Edit Programme{% else %}Create Programme{% endif %}</h3>
+        
+        <form action="" method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="txt_name">Programme Name</label>
+                <input class="form-control" type="text" name="txt_name" id="txt_name" required value="{{ editdata.programme_name }}" placeholder="e.g. BCA Honours">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="sel_dept">Hosting Department</label>
+                <select name="sel_dept" id="sel_dept" required>
+                    <option value="">-- Choose Department --</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}" {% if editdata.department_id == d.id %}selected{% endif %}>{{ d.department_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_duration">Duration (Semesters)</label>
+                    <input class="form-control" type="number" name="txt_duration" id="txt_duration" required min="1" max="10" value="{{ editdata.programme_duration|default:8 }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="txt_totalcredit">Graduation Credits</label>
+                    <input class="form-control" type="number" name="txt_totalcredit" id="txt_totalcredit" required min="10" value="{{ editdata.programme_totalcredit|default:160 }}">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                {% if editdata %}Save Changes{% else %}Add Programme{% endif %}
+            </button>
+            {% if editdata %}
+            <a href="{% url 'Administrator:Programme' %}" class="btn btn-secondary" style="width: 100%; margin-top: 10px; display: block; text-align: center;">Cancel Edit</a>
+            {% endif %}
+        </form>
+    </div>
+    
+    <!-- Table Card -->
+    <div class="glass-card">
+        <h3>Programme Registry</h3>
+        
+        {% if programmes %}
+        <div class="custom-table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Programme</th>
+                        <th>Department</th>
+                        <th>Semesters</th>
+                        <th>Grad. Credits</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in programmes %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><strong>{{ p.programme_name }}</strong></td>
+                        <td>{{ p.department.department_name }}</td>
+                        <td>{{ p.programme_duration }} Semesters</td>
+                        <td><span class="badge badge-success">{{ p.programme_totalcredit }} Cr</span></td>
+                        <td style="text-align: right;">
+                            <a href="{% url 'Administrator:edit_programme' p.id %}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px; margin-right: 5px;">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <a href="{% url 'Administrator:del_programme' p.id %}" onclick="return confirm('Are you sure you want to delete this programme?')" class="btn btn-danger" style="padding: 6px 12px; font-size: 13px;">
+                                <i class="fa-solid fa-trash"></i> Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); text-align: center; margin-top: 30px;">No programmes registered in the system.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'Company/CompanyBase.html' %}
+
+{% block title %}Edit Profile | EduTrack-X{% endblock %}
+{% block header_title %}Edit Profile{% endblock %}
+{% block header_subtitle %}Modify your corporate contact information and verification documents{% endblock %}
+{% block active_profile %}active{% endblock %}
+
+{% block content %}
+<style>
+    .profile-nav-link.active-tab {
+        background: var(--primary-glow) !important;
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+    }
+    .profile-nav-link:hover {
+        background: rgba(8, 145, 178, 0.04);
+        color: var(--primary);
+    }
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-label {
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        display: block;
+    }
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Profile Sub-Navigation Tabs -->
+<div class="glass-card" style="margin-bottom: 25px; padding: 12px 20px;">
+    <ul class="nav nav-pills border-0" style="gap: 10px;">
+        <li class="nav-item">
+            <a class="nav-link profile-nav-link" href="{% url 'Company:MyProfile' %}" style="border: none; border-radius: 8px; color: var(--text-muted); padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-user" style="margin-right: 8px;"></i>View Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link profile-nav-link active-tab" href="{% url 'Company:EditProfile' %}" style="border: none; border-radius: 8px; color: var(--text-muted); padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-user-pen" style="margin-right: 8px;"></i>Edit Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link profile-nav-link" href="{% url 'Company:ChangePassword' %}" style="border: none; border-radius: 8px; color: var(--text-muted); padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-key" style="margin-right: 8px;"></i>Change Password</a>
+        </li>
+    </ul>
+</div>
+
+<div class="form-grid">
+    <!-- Left Panel: Icon & Proof Warning -->
+    <div class="glass-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; height: fit-content;">
+        <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-glow); display: flex; align-items: center; justify-content: center; font-size: 56px; color: var(--primary); border: 3px solid var(--primary);">🏢</div>
+        
+        <div>
+            <h4 style="font-size: 16px; font-weight: 600; color: var(--text-main);">Update Corporate Profile</h4>
+            <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Ensure contact details are up to date for student applications.</p>
+        </div>
+    </div>
+    
+    <!-- Right Panel: Edit Form -->
+    <div class="glass-card">
+        <h3 style="margin-bottom: 25px; font-size: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fa-solid fa-gears" style="color: var(--primary); margin-right: 8px;"></i>Modify Details</h3>
+        
+        {% if msg %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 10px; font-size: 14px; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i>{{ msg }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endif %}
+        
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_name">Company Name *</label>
+                    <input class="form-control" type="text" name="txt_name" id="txt_name" value="{{ company.company_name }}" required style="border-radius: 8px;">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="txt_contact">General Phone *</label>
+                    <input class="form-control" type="text" name="txt_contact" id="txt_contact" value="{{ company.company_contact }}" required style="border-radius: 8px;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_website">Website URL</label>
+                    <input class="form-control" type="url" name="txt_website" id="txt_website" value="{{ company.company_website|default:'' }}" style="border-radius: 8px;">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="txt_industry">Industry Sector</label>
+                    <input class="form-control" type="text" name="txt_industry" id="txt_industry" value="{{ company.company_industry|default:'' }}" style="border-radius: 8px;">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="txt_description">Company Overview & Mission</label>
+                <textarea class="form-control" name="txt_description" id="txt_description" rows="3" style="border-radius: 8px; resize: vertical;">{{ company.company_description|default:'' }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="proof">Update Verification Proof File (PDF / Image)</label>
+                <input class="form-control" type="file" name="proof" id="proof" accept="image/*,application/pdf" style="border-radius: 8px;">
+                {% if company.company_proof %}
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">
+                    Current: <a href="{{ company.company_proof.url }}" target="_blank">{{ company.company_proof.name }}</a>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="txt_address">Corporate Address</label>
+                <textarea class="form-control" name="txt_address" id="txt_address" rows="3" required style="border-radius: 8px; resize: vertical;">{{ company.company_address }}</textarea>
+            </div>
+            
+            <div style="border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; justify-content: flex-end; gap: 15px;">
+                <a href="{% url 'Company:MyProfile' %}" class="btn btn-secondary" style="padding: 10px 24px; border-radius: 8px; font-weight: 500;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="padding: 10px 24px; border-radius: 8px; font-weight: 500;">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

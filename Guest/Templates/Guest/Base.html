@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="EduTrack - Internship Management Platform">
+  <meta name="author" content="EduTrack Team">
+  <title>{% block title %}EduTrack | Internship Management Platform{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'Main/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Additional CSS Files -->
+  <link rel="stylesheet" href="{% static 'Main/assets/css/fontawesome.css' %}">
+  <link rel="stylesheet" href="{% static 'Main/assets/css/templatemo-edu-meeting.css' %}">
+  <link rel="stylesheet" href="{% static 'Main/assets/css/owl.css' %}">
+  <link rel="stylesheet" href="{% static 'Main/assets/css/lightbox.css' %}">
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .header-area {
+      background-color: rgba(15, 23, 42, 0.95) !important;
+      position: fixed !important;
+      top: 40px;
+      z-index: 9999 !important;
+      transition: all 0.3s ease 0s;
+    }
+
+    .header-area.background-header {
+      top: 0px !important;
+      background-color: rgba(15, 23, 42, 0.98) !important;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Force logo and navigation text color to stay white/light on scroll */
+    .header-area .main-nav .logo,
+    .header-area.background-header .main-nav .logo {
+      color: #ffffff !important;
+    }
+
+    .header-area .main-nav .nav li a,
+    .header-area.background-header .main-nav .nav li a {
+      color: #e2e8f0 !important;
+    }
+
+    .header-area .main-nav .nav li a:hover,
+    .header-area.background-header .main-nav .nav li a:hover,
+    .header-area .main-nav .nav li a.active,
+    .header-area.background-header .main-nav .nav li a.active {
+      color: #f59e0b !important;
+    }
+
+    @media (max-width: 991px) {
+
+      .header-area,
+      .header-area.background-header {
+        top: 0px !important;
+      }
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+
+<body class="guest-body">
+
+  <!-- Sub Header -->
+  <div class="sub-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-sm-8">
+          <div class="left-content">
+            <p>Welcome to <em>EduTrack</em> Internship Management Platform</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-sm-4">
+          <div class="right-icons">
+            <ul>
+              <li><span style="color: #fff; font-size: 13px;">Guest Portal</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky {% block header_class %}{% endblock %}">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <!-- ***** Logo Start ***** -->
+            <a href="{% url 'Guest:index' %}" class="logo">
+              EduTrack
+            </a>
+            <!-- ***** Logo End ***** -->
+            <!-- ***** Menu Start ***** -->
+            <ul class="nav">
+              <li><a href="{% url 'Guest:index' %}" class="{% block home_active %}{% endblock %}">Home</a></li>
+              <li><a href="{% url 'Guest:StudentRegister' %}" class="{% block student_active %}{% endblock %}">Student Register</a></li>
+              <li><a href="{% url 'Guest:CompanyRegister' %}" class="{% block company_active %}{% endblock %}">Company Register</a></li>
+              <li><a href="{% url 'Guest:Login' %}" class="nav-signin-btn {% block login_active %}{% endblock %}">Sign In</a></li>
+            </ul>
+            <a class='menu-trigger'>
+              <span>Menu</span>
+            </a>
+            <!-- ***** Menu End ***** -->
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ***** Header Area End ***** -->
+
+  {% block content %}{% endblock %}
+
+  <!-- Scripts -->
+  <script src="{% static 'Main/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'Main/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'Main/assets/js/isotope.min.js' %}"></script>
+  <script src="{% static 'Main/assets/js/owl-carousel.js' %}"></script>
+  <script src="{% static 'Main/assets/js/lightbox.js' %}"></script>
+  <script src="{% static 'Main/assets/js/tabs.js' %}"></script>
+  <script src="{% static 'Main/assets/js/video.js' %}"></script>
+  <script src="{% static 'Main/assets/js/slick-slider.js' %}"></script>
+  <script src="{% static 'Main/assets/js/custom.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+
+</html>

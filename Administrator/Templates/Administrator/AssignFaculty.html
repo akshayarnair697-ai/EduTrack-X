@@ -1,0 +1,107 @@
+{% extends 'Administrator/AdminBase.html' %}
+
+{% block title %}Assign Faculty Guide | Administrator Console{% endblock %}
+{% block active_student %}active{% endblock %}
+{% block header_title %}Assign Faculty Guide for {{ student.student_name }}{% endblock %}
+{% block header_subtitle %}Filter and assign faculty guides belonging to the student's department ({{ department.department_name }}){% endblock %}
+
+{% block content %}
+<!-- Selected Student Profile Summary Card -->
+<div class="card" style="padding: 25px; margin-bottom: 30px; border-left: 4px solid #0284c7; background: #ffffff;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #0f172a; font-size: 18px; margin: 0;">
+            <i class="fa-solid fa-user-graduate"></i> Student Profile Summary
+        </h3>
+        <a href="{% url 'Administrator:VerifyStudents' %}" class="btn btn-secondary btn-sm" style="font-size: 13px;">
+            <i class="fa-solid fa-arrow-left"></i> Back to All Students
+        </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px;">
+        <div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Student Name</div>
+            <div style="font-size: 16px; font-weight: 700; color: #0f172a; margin-top: 3px;">{{ student.student_name }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Register Number</div>
+            <div style="font-size: 15px; font-weight: 700; color: #0284c7; margin-top: 3px;">{{ student.student_regno|default:"N/A" }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Degree Programme</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 3px;">{{ student.programme.programme_name }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Academic Department</div>
+            <div style="font-size: 14px; font-weight: 700; color: #059669; margin-top: 3px;">{{ department.department_name }}</div>
+        </div>
+        <div>
+            <div style="font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600;">Current Assigned Guide</div>
+            <div style="font-size: 14px; font-weight: 700; color: #7c3aed; margin-top: 3px;">
+                {% if student.assigned_faculty %}
+                    <i class="fa-solid fa-user-check"></i> {{ student.assigned_faculty.faculty_name }}
+                {% else %}
+                    <span style="color: #d97706;">Unassigned</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Department Faculty Selection Table -->
+<div class="card" style="padding: 25px; background: #ffffff;">
+    <h3 style="color: #0f172a; font-size: 18px; margin-bottom: 15px;">
+        <i class="fa-solid fa-chalkboard-user"></i> Verified Faculty Guides in {{ department.department_name }} ({{ dept_faculties.count }})
+    </h3>
+
+    {% if dept_faculties %}
+    <div style="overflow-x: auto;">
+        <table class="table" style="width: 100%; color: #0f172a;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                    <th style="padding: 12px; color: #475569;">Faculty Name</th>
+                    <th style="padding: 12px; color: #475569;">Contact & Email</th>
+                    <th style="padding: 12px; color: #475569;">Department</th>
+                    <th style="padding: 12px; color: #475569;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in dept_faculties %}
+                <tr style="border-bottom: 1px solid #f1f5f9;">
+                    <td style="padding: 14px;">
+                        <div style="font-weight: 700; color: #0f172a; font-size: 15px;">{{ f.faculty_name }}</div>
+                        {% if student.assigned_faculty and student.assigned_faculty.id == f.id %}
+                            <span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">Currently Assigned</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 14px; font-size: 13px; color: #0f172a;">
+                        <div>{{ f.faculty_email }}</div>
+                        <div style="font-size: 12px; color: #64748b;">{{ f.faculty_contact }}</div>
+                    </td>
+                    <td style="padding: 14px; font-size: 13px; color: #059669; font-weight: 600;">
+                        {{ f.department.department_name }}
+                    </td>
+                    <td style="padding: 14px;">
+                        {% if student.assigned_faculty and student.assigned_faculty.id == f.id %}
+                            <span style="color: #059669; font-weight: 600; font-size: 13px;"><i class="fa-solid fa-circle-check"></i> Assigned Guide</span>
+                        {% else %}
+                            <a href="{% url 'Administrator:AssignFacultyAction' student.id f.id %}" class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;">
+                                <i class="fa-solid fa-link"></i> Assign as Guide
+                            </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="background: #fee2e2; color: #991b1b; padding: 20px; border-radius: 8px; text-align: center;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px; margin-bottom: 10px;"></i>
+        <div>No approved faculty guides found in the <strong>{{ department.department_name }}</strong> department.</div>
+        <div style="margin-top: 10px;">
+            <a href="{% url 'Administrator:AddFaculty' %}" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Faculty to {{ department.department_name }}</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

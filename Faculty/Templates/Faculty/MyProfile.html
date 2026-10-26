@@ -1,0 +1,132 @@
+{% extends 'Faculty/FacultyBase.html' %}
+
+{% block title %}My Profile | EduTrack-X{% endblock %}
+{% block header_title %}My Profile{% endblock %}
+{% block header_subtitle %}View your academic department coordinator and registration profile{% endblock %}
+{% block active_profile %}active{% endblock %}
+
+{% block content %}
+<style>
+    .profile-nav-link.active-tab {
+        background: var(--primary-glow) !important;
+        color: var(--primary) !important;
+        font-weight: 600 !important;
+    }
+    .profile-nav-link:hover {
+        background: rgba(8, 145, 178, 0.04);
+        color: var(--primary);
+    }
+    .profile-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 30px;
+    }
+    .profile-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 500;
+        margin-bottom: 4px;
+    }
+    .profile-value {
+        font-size: 16px;
+        color: var(--text-main);
+        font-weight: 600;
+    }
+    .detail-item {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px 20px;
+        transition: var(--transition-smooth);
+    }
+    .detail-item:hover {
+        border-color: rgba(8, 145, 178, 0.2);
+        box-shadow: 0 4px 12px rgba(8, 145, 178, 0.04);
+    }
+    @media (max-width: 768px) {
+        .profile-details-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- Profile Sub-Navigation Tabs -->
+<div class="glass-card" style="margin-bottom: 25px; padding: 12px 20px;">
+    <ul class="nav nav-pills border-0" style="gap: 10px;">
+        <li class="nav-item">
+            <a class="nav-link profile-nav-link active-tab" href="{% url 'Faculty:MyProfile' %}" style="border: none; border-radius: 8px; color: var(--text-muted); padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-user" style="margin-right: 8px;"></i>View Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link profile-nav-link" href="{% url 'Faculty:EditProfile' %}" style="border: none; border-radius: 8px; color: var(--text-muted); padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-user-pen" style="margin-right: 8px;"></i>Edit Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link profile-nav-link" href="{% url 'Faculty:ChangePassword' %}" style="border: none; border-radius: 8px; color: var(--text-muted); padding: 8px 16px; font-size: 14px;"><i class="fa-solid fa-key" style="margin-right: 8px;"></i>Change Password</a>
+        </li>
+    </ul>
+</div>
+
+<div class="profile-details-grid">
+    <!-- Left Column: Avatar and Quick Stats -->
+    <div class="glass-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; height: fit-content;">
+        {% if faculty.faculty_photo %}
+        <img src="{{ faculty.faculty_photo.url }}" alt="Profile Photo" style="width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        {% else %}
+        <div style="width: 150px; height: 150px; border-radius: 50%; background: var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 72px; font-weight: bold; border: 3px solid var(--border-color);">🧑‍🏫</div>
+        {% endif %}
+        
+        <div>
+            <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 5px;">{{ faculty.faculty_name }}</h3>
+            <span class="badge badge-success">Faculty Coordinator</span>
+        </div>
+        
+        <div style="width: 100%; border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; flex-direction: column; gap: 10px; text-align: left; font-size: 14px;">
+            <div>
+                <span style="color: var(--text-muted);">Registered On:</span>
+                <strong style="float: right;">{{ faculty.faculty_date }}</strong>
+            </div>
+            <div>
+                <span style="color: var(--text-muted);">Status:</span>
+                <strong style="float: right; color: var(--success);">Approved / Active</strong>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Full Details -->
+    <div class="glass-card">
+        <h3 style="margin-bottom: 25px; font-size: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fa-solid fa-address-card" style="color: var(--primary); margin-right: 8px;"></i>Departmental & Coordinator Information</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+            <div class="detail-item">
+                <div class="profile-label">Full Name</div>
+                <div class="profile-value">{{ faculty.faculty_name }}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="profile-label">Email Address</div>
+                <div class="profile-value">{{ faculty.faculty_email }}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="profile-label">Contact Number</div>
+                <div class="profile-value">{{ faculty.faculty_contact }}</div>
+            </div>
+            
+            <div class="detail-item">
+                <div class="profile-label">Department</div>
+                <div class="profile-value">{{ faculty.department.department_name }}</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 20px;" class="detail-item">
+            <div class="profile-label">Residential Address</div>
+            <div class="profile-value" style="font-weight: 500; line-height: 1.6;">{{ faculty.faculty_address }}</div>
+        </div>
+        
+        <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+            <a href="{% url 'Faculty:EditProfile' %}" class="btn btn-primary" style="padding: 10px 24px; border-radius: 8px;"><i class="fa-solid fa-user-pen" style="margin-right: 8px;"></i>Edit Profile Info</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

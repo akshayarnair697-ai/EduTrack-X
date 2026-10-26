@@ -1,0 +1,91 @@
+{% extends 'Administrator/AdminBase.html' %}
+
+{% block title %}Register Faculty Guide | Admin Console{% endblock %}
+{% block header_title %}Faculty Guide Registration{% endblock %}
+{% block header_subtitle %}Register and onboard new academic faculty guides with dynamic combo password generation{% endblock %}
+{% block active_faculty %}active{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 650px; margin: 0 auto; padding: 35px; background: #ffffff;">
+    <div style="background: #e0f2fe; border: 1px solid #0284c7; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;">
+        <i class="fa-solid fa-key" style="font-size: 24px; color: #0284c7;"></i>
+        <div>
+            <div style="font-weight: 700; color: #0f172a;">Dynamic Combo Password Security</div>
+            <div style="font-size: 13px; color: #334155;">Passwords are automatically generated using a combination of the faculty's Name, Department code, and a secure random pin (e.g. <code>ROBE@COM9421</code>).</div>
+        </div>
+    </div>
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="txt_name" style="color: #0f172a; font-weight: 600;">Full Name *</label>
+            <input type="text" name="txt_name" id="txt_name" class="form-control" required placeholder="Dr. Sarah Connor" oninput="generateComboPassword()">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="txt_email" style="color: #0f172a; font-weight: 600;">Email Address *</label>
+                <input type="email" name="txt_email" id="txt_email" class="form-control" required placeholder="sarah.c@college.edu">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txt_contact" style="color: #0f172a; font-weight: 600;">Contact Phone *</label>
+                <input type="text" name="txt_contact" id="txt_contact" class="form-control" required placeholder="+91 9876543210">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_address" style="color: #0f172a; font-weight: 600;">Office / Contact Address *</label>
+            <textarea name="txt_address" id="txt_address" rows="2" class="form-control" required placeholder="Academic Block B, Room 402"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="sel_department" style="color: #0f172a; font-weight: 600;">Department *</label>
+            <select name="sel_department" id="sel_department" class="form-control" required style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0;" onchange="generateComboPassword()">
+                <option value="">-- Select Department --</option>
+                {% for d in departments %}
+                <option value="{{ d.id }}" data-deptname="{{ d.department_name }}">{{ d.department_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+            <div class="form-group">
+                <label class="form-label" for="photo" style="color: #0f172a; font-weight: 600;">Faculty Photo</label>
+                <input type="file" name="photo" id="photo" class="form-control" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="txt_password" style="color: #0f172a; font-weight: 600;">Generated  Password *</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" name="txt_password" id="txt_password" class="form-control" required style="font-family: monospace; font-weight: 700; color: #0284c7;" placeholder="Enter  Password">
+                    <button type="button" class="btn btn-secondary" onclick="generateComboPassword()" style="padding: 0 12px;" title="Regenerate Password Code">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Save & Onboard Faculty Guide</button>
+    </form>
+</div>
+
+<script>
+function generateComboPassword() {
+    const nameInput = document.getElementById('txt_name').value.trim();
+    const deptSelect = document.getElementById('sel_department');
+    const selectedOption = deptSelect.options[deptSelect.selectedIndex];
+    const deptName = selectedOption ? (selectedOption.getAttribute('data-deptname') || '') : '';
+
+    let cleanName = nameInput.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 4);
+    if (!cleanName) cleanName = 'FAC';
+
+    let cleanDept = deptName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 3);
+    if (!cleanDept) cleanDept = 'GEN';
+
+    const randomPin = Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('txt_password').value = `${cleanName}@${cleanDept}${randomPin}`;
+}
+
+// Initial generation
+document.addEventListener('DOMContentLoaded', generateComboPassword);
+</script>
+{% endblock %}

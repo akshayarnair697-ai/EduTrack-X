@@ -1,0 +1,70 @@
+{% extends 'Faculty/FacultyBase.html' %}
+{% block title %}Verify Certificate | EduTrack-X{% endblock %}
+{% block active_certs %}active{% endblock %}
+{% block header_title %}Verify Certificate Submission{% endblock %}
+{% block header_subtitle %}Student: {{ cert.student.student_name }} ({{ cert.student.student_regno }}){% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="glass-card mb-4">
+            <h3 class="mb-3">Certificate Information</h3>
+            <div class="row mb-3">
+                <div class="col-md-6 mb-2"><strong>Title:</strong> {{ cert.certificate_title }}</div>
+                <div class="col-md-6 mb-2"><strong>Category:</strong> {{ cert.activity_category.category_name }}</div>
+                <div class="col-md-6 mb-2"><strong>Issuing Org:</strong> {{ cert.issuing_organization }}</div>
+                <div class="col-md-6 mb-2"><strong>Issue Date:</strong> {{ cert.issue_date|date:"M d, Y" }}</div>
+                <div class="col-md-6 mb-2"><strong>Certificate No:</strong> {{ cert.certificate_number|default:"N/A" }}</div>
+                <div class="col-md-6 mb-2"><strong>Submitted On:</strong> {{ cert.submission_date|date:"M d, Y" }}</div>
+            </div>
+
+            {% if cert.additional_remarks %}
+            <div class="p-3 mb-3 rounded" style="background:#f8fafc; border:1px solid #e2e8f0;">
+                <strong>Student Remarks:</strong> {{ cert.additional_remarks }}
+            </div>
+            {% endif %}
+
+            {% if cert.certificate_file %}
+            <div class="mb-4">
+                <a href="{{ cert.certificate_file.url }}" target="_blank" class="btn btn-primary">
+                    <i class="fa-solid fa-file-pdf"></i> Open & Inspect Uploaded File
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="glass-card">
+            <h3 class="mb-4">Faculty Verification Action</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label class="form-label">Verification Action *</label>
+                    <select name="sel_action" class="form-control" required>
+                        <option value="approve">Approve Certificate & Award Credits</option>
+                        <option value="reject">Reject Certificate</option>
+                        <option value="resubmit">Request Resubmission (Incomplete Document)</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Confirmed Credit Value to Award *</label>
+                    <input type="number" name="txt_credit_value" class="form-control" value="{{ cert.activity_category.default_credit|default:2 }}" min="0" max="20" required>
+                    <small class="text-muted">Credits will be automatically added to student's tracker upon approval.</small>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label class="form-label">Faculty Remarks / Feedback</label>
+                    <textarea name="txt_remarks" class="form-control" rows="3" placeholder="Enter remarks for the student"></textarea>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fa-solid fa-check-double"></i> Finalize Verification
+                    </button>
+                    <a href="{% url 'Faculty:CertificateVerifications' %}" class="btn btn-secondary w-50">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

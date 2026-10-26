@@ -1,0 +1,92 @@
+{% extends 'Guest/Base.html' %}
+
+{% block title %}Student Registration | EduTrack{% endblock %}
+{% block student_active %}active{% endblock %}
+
+{% block content %}
+<div style="padding-top: 140px; padding-bottom: 50px;">
+    <div class="glass-card" style="max-width: 600px; margin: 0 auto; padding: 35px; background: #ffffff;">
+        <h3 style="color: #0f172a; margin-bottom: 10px; text-align: center; font-weight: 700;">Student Registration</h3>
+        <p style="color: #64748b; text-align: center; margin-bottom: 25px;">Create your student account to apply for internships</p>
+
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_regno" style="color: #0f172a; font-weight: 600;">Register Number / Admission ID *</label>
+                    <input type="text" name="txt_regno" id="txt_regno" class="form-control" required placeholder="e.g. REG-2024-049">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="txt_name" style="color: #0f172a; font-weight: 600;">Full Name *</label>
+                    <input type="text" name="txt_name" id="txt_name" class="form-control" required placeholder="Enter full name">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="gender" style="color: #0f172a; font-weight: 600;">Gender *</label>
+                    <select name="gender" id="gender" class="form-control" required style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0;">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="dob" style="color: #0f172a; font-weight: 600;">Date of Birth *</label>
+                    <input type="date" name="dob" id="dob" class="form-control" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="txt_email" style="color: #0f172a; font-weight: 600;">Email Address *</label>
+                    <input type="email" name="txt_email" id="txt_email" class="form-control" required placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="txt_contact" style="color: #0f172a; font-weight: 600;">Contact Phone *</label>
+                    <input type="text" name="txt_contact" id="txt_contact" class="form-control" required placeholder="Enter phone number">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label class="form-label" for="txt_address" style="color: #0f172a; font-weight: 600;">Address *</label>
+                <textarea name="txt_address" id="txt_address" rows="2" class="form-control" required placeholder="Enter home address"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="sel_programme" style="color: #0f172a; font-weight: 600;">Programme *</label>
+                    <select name="sel_programme" id="sel_programme" class="form-control" required style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0;">
+                        <option value="">Select Programme</option>
+                        {% for p in programmes %}
+                        <option value="{{ p.id }}">{{ p.programme_name }} ({{ p.department.department_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="sel_batch" style="color: #0f172a; font-weight: 600;">Batch *</label>
+                    <select name="sel_batch" id="sel_batch" class="form-control" required style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0;">
+                        <option value="">Select Batch</option>
+                        {% for b in batches %}
+                        <option value="{{ b.id }}">{{ b.batch_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div class="form-group">
+                    <label class="form-label" for="photo" style="color: #0f172a; font-weight: 600;">Student Photo</label>
+                    <input type="file" name="photo" id="photo" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="txt_password" style="color: #0f172a; font-weight: 600;">Password *</label>
+                    <input type="password" name="txt_password" id="txt_password" class="form-control" required placeholder="Create password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Complete Student Registration</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

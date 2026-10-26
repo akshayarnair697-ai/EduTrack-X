@@ -1,0 +1,51 @@
+{% extends 'Student/StudentBase.html' %}
+
+{% block title %}Update Task Progress | Student Portal{% endblock %}
+{% block active_tasks %}active{% endblock %}
+{% block header_title %}Update Task Progress & Upload Work File{% endblock %}
+{% block header_subtitle %}Task: {{ task.task_title }} (Company: {{ task.company.company_name }}){% endblock %}
+
+{% block content %}
+<div class="glass-card" style="max-width: 650px; margin: 0 auto; padding: 35px; background: #ffffff;">
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+        <h4 style="font-size: 16px; color: #0f172a; font-weight: 700; margin-bottom: 8px;">{{ task.task_title }}</h4>
+        <div style="font-size: 13px; color: #0284c7; font-weight: 600; margin-bottom: 10px;">Company: {{ task.company.company_name }} | Deadline: {{ task.task_deadline|default:"No deadline" }}</div>
+        <p style="font-size: 13px; color: #475569; margin: 0; line-height: 1.6;">{{ task.task_description }}</p>
+
+        {% if task.task_file %}
+        <div style="margin-top: 12px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+            <a href="{{ task.task_file.url }}" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 12px;"><i class="fa-solid fa-file-arrow-down"></i> Download Company Task Specification</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="sel_status" style="color: #0f172a; font-weight: 600;">Update Work Status *</label>
+            <select name="sel_status" id="sel_status" class="form-control" required style="background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0;">
+                <option value="0" {% if task.task_status == 0 %}selected{% endif %}>Assigned / Pending</option>
+                <option value="1" {% if task.task_status == 1 %}selected{% endif %}>In Progress</option>
+                <option value="2" {% if task.task_status == 2 %}selected{% endif %}>Completed & Submitted</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="txt_remark" style="color: #0f172a; font-weight: 600;">Submission Remarks / Progress Summary</label>
+            <textarea name="txt_remark" id="txt_remark" rows="3" class="form-control" placeholder="Describe work completed, deliverables generated, or technical notes...">{{ task.submission_remark|default:'' }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label" for="file_submission" style="color: #0f172a; font-weight: 600;">Upload Completed Task File (ZIP, PDF, DOCX, Code File)</label>
+            <input type="file" name="file_submission" id="file_submission" class="form-control">
+            {% if task.submission_file %}
+            <div style="font-size: 12px; color: #059669; margin-top: 5px; font-weight: 600;">
+                <i class="fa-solid fa-check"></i> Previously uploaded file: <a href="{{ task.submission_file.url }}" target="_blank" style="color: #0284c7;">Download Current File</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 25px; padding: 14px; font-weight: 600;">Save & Submit Task Progress</button>
+    </form>
+</div>
+{% endblock %}
